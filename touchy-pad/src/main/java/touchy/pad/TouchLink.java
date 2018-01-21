@@ -39,4 +39,34 @@ public interface TouchLink {
 	 * @return the textual contents of the clipboard.
 	 */
 	String getClipboard();
+	
+	/**
+	 * Flavor of TouchLink to indicate that the implementation live on the
+	 * client as proxy for the real implementation.
+	 * 
+	 * @author Jan Groothuijse
+	 *
+	 */
+	interface ClientProxy extends TouchLink, AutoCloseable {
+		
+	}
+	
+	/**
+	 * Flavor of TouchLink to connect a network proxied client to the backend.
+	 * 
+	 * @author jan
+	 *
+	 */
+	interface ServerProxy extends TouchLink, AutoCloseable {
+		
+	}
+	
+	/**
+	 * Sink of this application. Real implementations should move the mouse etc.
+	 * 
+	 * @author Jan Groothuijse
+	 */
+	interface Backend extends TouchLink {
+		
+	}
 }
