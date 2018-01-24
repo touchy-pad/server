@@ -2,6 +2,8 @@ package touchy.pad;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 
 /**
  * Entry point for the application, uses Spring Boot to auto configure.
@@ -9,12 +11,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author Jan Groothuijse
  */
 @SpringBootApplication
+@ContextConfiguration(classes = SpringConfig.class)
+@ActiveProfiles("allwaysNull")
 public class TouchyPadApplication {
 
-	/**
-	 * @param args will be ignored for now.
-	 */
-	public static void main(String[] args) {
-		SpringApplication.run(TouchyPadApplication.class, args);
-	}
+    /**
+     * @param args will be ignored for now.
+     */
+    public static void main(final String[] args) {
+        SpringApplication.run(TouchyPadApplication.class, args);
+    }
 }

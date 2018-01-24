@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Aspect
 @ComponentScan
-public class Logging {
+public class LoggingAspect {
 
 	/**
 	 * Selects all of TouchLinks methods and logs something with their names
