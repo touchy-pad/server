@@ -10,9 +10,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.junit.Test;
 
 import touchy.pad.TouchLink;
-import touchy.pad.proxy.socket.SocketProxyClient;
-import touchy.pad.proxy.socket.SocketProxyClientConfig;
-import touchy.pad.proxy.socket.SocketProxyServer;
 
 /**
  * Unit tests the socket proxy client en socket proxy server.
@@ -23,75 +20,87 @@ import touchy.pad.proxy.socket.SocketProxyServer;
  * @author Jan Groothuijse
  */
 public class SocketProxyTest {
-	
-	/**
-	 * One big test-case to improve testing performance. Unit test should be fast to execute.
-	 * @throws Exception when something goes wrong.
-	 */
-	@Test
-	public void test() throws Exception {
 
-		final String clipboard = "Clipboard contents";
-		final int port = 9999;
-		
-		final AtomicBoolean scrolled = new AtomicBoolean(false);
-		final AtomicBoolean typed = new AtomicBoolean(false);
-		
-		final TouchLink.Backend fakeBackend = new TouchLink.Backend() {
-			
-			@Override
-			public void typeText(String text) {
-				typed.set(true);
-			}
-			
-			@Override
-			public void scroll(int amount) {
-				scrolled.set(true);
-			}
-			
-			@Override
-			public Point move(Point delta, boolean left, boolean middle, boolean right) {
-				return delta;
-			}
-			
-			@Override
-			public String getClipboard() {
-				return clipboard;
-			}
-		};
-		
-				
-		try (final SocketProxyServer server = new SocketProxyServer(new SocketProxyServer.SockerProxyServerConfig() {
-			@Override
-			public int getPort() {
-				return port;
-			}
-		}, fakeBackend);
-				final SocketProxyClient client = new SocketProxyClient(new SocketProxyClientConfig() {
+    /**
+     * One big test-case to improve testing performance. Unit test should be
+     * fast to execute.
+     * 
+     * @throws Exception when something goes wrong.
+     */
+    @Test
+    public void test() throws Exception {
 
-			@Override
-			public String getHost() {
-				return "localhost";
-			}
+        final String clipboard = "Clipboard contents";
+        final int port = 9999;
 
-			@Override
-			public int getPort() {
-				return port;
-			}
-		})) {
-			assertEquals(clipboard, client.getClipboard());
-			
-			assertFalse(scrolled.get());
-			client.scroll(0);
-			assertTrue(scrolled.get());
-			
-			assertFalse(typed.get());
-			client.typeText("");
-			assertTrue(typed.get());
-			
-			final Point point = new Point(0, 0);
-			
-			assertEquals(point, client.move(point, true, true, true));
-		}
-	}
+        final AtomicBoolean scrolled = new AtomicBoolean(false);
+        final AtomicBoolean typed = new AtomicBoolean(false);
+
+        final TouchLink.Backend fakeBackend = new TouchLink.Backend() {
+
+            @Override
+            public void typeText(String text) {
+                typed.set(true);
+            }
+
+            @Override
+            public void scroll(int amount) {
+                scrolled.set(true);
+            }
+
+            @Override
+            public Point move(Point delta, boolean left, boolean middle,
+                    boolean right) {
+                return delta;
+            }
+
+            @Override
+            public String getClipboard() {
+                return clipboard;
+            }
+        };
+        final SocketProxyServerConfig serverConfig =
+                new SocketProxyServerConfig() {
+                    @Override
+                    public int getPort() {
+                        return port;
+                    }
+                };
+        final SocketProxyClientConfig clientConfig =
+                new SocketProxyClientConfig() {
+
+                    @Override
+                    public String getHost() {
+                        return "localhost";
+                    }
+
+                    @Override
+                    public int getPort() {
+                        return port;
+                    }
+                };
+
+        try (final SocketProxyServer server =
+                new SocketProxyServer(serverConfig, fakeBackend);
+                final SocketProxyClient client =
+                        new SocketProxyClient(clientConfig)) {
+
+            // Test clipboard
+            assertEquals(clipboard, client.getClipboard());
+
+            // Test scrolling
+            assertFalse(scrolled.get());
+            client.scroll(0);
+            assertTrue(scrolled.get());
+
+            // Test typing
+            assertFalse(typed.get());
+            client.typeText("");
+            assertTrue(typed.get());
+
+            // Test moving
+            final Point point = new Point(0, 0);
+            assertEquals(point, client.move(point, true, true, true));
+        }
+    }
 }
