@@ -10,21 +10,21 @@ import touchy.pad.TouchLink;
 /**
  * A class per method of the TouchLink interface, so that the methods calls can
  * be serialized and transmitted.
- * 
+ *
  * These objects marshall the method calls, using serialization to get across
  * the socket.
- * 
+ *
  * @author Jan Groothuijse
  */
 public interface MethodProxy extends Function<TouchLink, Object>, Serializable {
 
     /**
      * Proxy for a getClipboard method call.
-     * 
+     *
      * @author Jan Groothuijse
      */
     @RequiredArgsConstructor
-    public final class GetClipboard implements MethodProxy {
+    final class GetClipboard implements MethodProxy {
         /**
          * For serialization.
          */
@@ -38,11 +38,11 @@ public interface MethodProxy extends Function<TouchLink, Object>, Serializable {
 
     /**
      * Proxy for a move method call.
-     * 
+     *
      * @author Jan Groothuijse
      */
     @RequiredArgsConstructor
-    public final class Move implements MethodProxy {
+    final class Move implements MethodProxy {
 
         /**
          * For serialization.
@@ -73,11 +73,11 @@ public interface MethodProxy extends Function<TouchLink, Object>, Serializable {
 
     /**
      * Proxy for a scroll method call.
-     * 
+     *
      * @author Jan Groothuijse
      */
     @RequiredArgsConstructor
-    public final class Scroll implements MethodProxy {
+    final class Scroll implements MethodProxy {
         /**
          * For serialization.
          */
@@ -97,11 +97,11 @@ public interface MethodProxy extends Function<TouchLink, Object>, Serializable {
 
     /**
      * Proxy for a typeText method call.
-     * 
+     *
      * @author Jan Groothuijse
      */
     @RequiredArgsConstructor
-    public final class TypeText implements MethodProxy {
+    final class TypeText implements MethodProxy {
         /**
          * For serialization.
          */

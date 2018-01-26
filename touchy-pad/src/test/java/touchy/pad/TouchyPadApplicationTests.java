@@ -8,13 +8,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * Test to see if the context will load.
- * 
+ *
  * @author Jan Groothuijse
  *
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest
 @ActiveProfiles("allwaysNull")
+@SpringBootTest(classes = TouchyPadApplication.class)
 public class TouchyPadApplicationTests {
 
     /**
@@ -22,6 +22,7 @@ public class TouchyPadApplicationTests {
      */
     @Test
     public void contextLoads() {
+
     }
 
 }

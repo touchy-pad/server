@@ -7,18 +7,18 @@ import org.springframework.test.context.ContextConfiguration;
 
 /**
  * Entry point for the application, uses Spring Boot to auto configure.
- * 
+ *
  * @author Jan Groothuijse
  */
 @SpringBootApplication
 @ContextConfiguration(classes = SpringConfig.class)
 @ActiveProfiles("allwaysNull")
-public class TouchyPadApplication {
+public interface TouchyPadApplication {
 
     /**
      * @param args will be ignored for now.
      */
-    public static void main(final String[] args) {
+    static void main(final String[] args) {
         SpringApplication.run(TouchyPadApplication.class, args);
     }
 }

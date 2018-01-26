@@ -2,7 +2,7 @@ package touchy.pad;
 
 /**
  * Exception when proxy fails to initialize.
- * 
+ *
  * @author Jan Groothuijse
  */
 public final class ProxyInitializationException extends Exception {

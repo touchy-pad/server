@@ -4,7 +4,7 @@ import touchy.pad.RuntimeConfiguration;
 
 /**
  * Client configuration.
- * 
+ *
  * @author Jan Groothuijse
  */
 public interface SocketProxyClientConfig {

@@ -5,7 +5,7 @@ import touchy.pad.RuntimeConfiguration;
 /**
  * Configuration with default implementation to supply default values. Actual
  * configured value will be weaved in using aspects.
- * 
+ *
  * @author Jan Groothuijse
  */
 public interface SocketProxyServerConfig {

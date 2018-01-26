@@ -16,17 +16,23 @@ import touchy.pad.TouchLink;
 /**
  * Proxy for the TouchLink.Backend, lives on the mobile device. Calls are
  * forwarded through the SocketProxyServer.
- * 
+ *
  * @author Jan Groothuijse
  */
 @Slf4j
-public class SocketProxyClient implements TouchLink.ClientProxy, AutoCloseable {
+public final class SocketProxyClient
+        implements TouchLink.ClientProxy, AutoCloseable {
 
     /**
      * Reference to close.
      */
     private final SendReceive sendReceive;
 
+    /**
+     * @param config to get port number and hostname.
+     * @throws UnknownHostException when no connection can be made.
+     * @throws IOException when the connection fails.
+     */
     public SocketProxyClient(final SocketProxyClientConfig config)
             throws UnknownHostException, IOException {
         log.info("Creating client connection.");
@@ -49,7 +55,7 @@ public class SocketProxyClient implements TouchLink.ClientProxy, AutoCloseable {
 
     /**
      * Template pattern applied for sending and receiving while holding a lock.
-     * 
+     *
      * @author Jan Groothuijse
      */
     @RequiredArgsConstructor

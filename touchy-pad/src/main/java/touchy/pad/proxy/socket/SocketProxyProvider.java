@@ -13,25 +13,25 @@ import touchy.pad.TouchLink.ServerProxy;
 
 /**
  * Provides proxy using the Socket Proxy implementations.
- * 
+ *
  * While this is a singleton, both the mobile device and the server running on
  * the pc will have a different version.
- * 
+ *
  * @author Jan Groothuijse
  */
 @RequiredArgsConstructor
 @Component("socketProxy")
-public class SocketProxyProvider implements ProxyProvider {
+public final class SocketProxyProvider implements ProxyProvider {
 
     /**
      * Server config.
      */
-    final SocketProxyServerConfig serverConfig;
+    private final SocketProxyServerConfig serverConfig;
 
     /**
      * Client config.
      */
-    final SocketProxyClientConfig clientConfig;
+    private final SocketProxyClientConfig clientConfig;
 
     @Override
     public ServerProxy getAndStartServer(final TouchLink.Backend backEnd)

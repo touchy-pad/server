@@ -7,7 +7,7 @@ import touchy.pad.RuntimeConfigurationBackend;
 
 /**
  * Implementation that returns constant values regardless of the name.
- * 
+ *
  * @author Jan Groothuijse
  */
 @Profile("constant")
@@ -56,7 +56,7 @@ public final class ConstantRuntimeConfigurationBackend
     }
 
     @Override
-    public Short getShort(String name) {
+    public Short getShort(final String name) {
         return 1;
     }
 

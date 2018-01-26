@@ -14,18 +14,18 @@ import touchy.pad.TouchLink;
 
 /**
  * Unit tests the socket proxy client en socket proxy server.
- * 
+ *
  * Testing both in isolation would require creating alternative implementation
  * of both, which is why they are unit-tested together here.
- * 
+ *
  * @author Jan Groothuijse
  */
-public class SocketProxyTest {
+public final class SocketProxyTest {
 
     /**
      * One big test-case to improve testing performance. Unit test should be
      * fast to execute.
-     * 
+     *
      * @throws Exception when something goes wrong.
      */
     @Test
@@ -40,18 +40,18 @@ public class SocketProxyTest {
         final TouchLink.Backend fakeBackend = new TouchLink.Backend() {
 
             @Override
-            public void typeText(String text) {
+            public void typeText(final String text) {
                 typed.set(true);
             }
 
             @Override
-            public void scroll(int amount) {
+            public void scroll(final int amount) {
                 scrolled.set(true);
             }
 
             @Override
-            public Supplier<Point> move(Point delta, boolean left,
-                    boolean middle, boolean right) {
+            public Supplier<Point> move(final Point delta, final boolean left,
+                    final boolean middle, final boolean right) {
                 return () -> delta;
             }
 
@@ -81,9 +81,9 @@ public class SocketProxyTest {
                     }
                 };
 
-        try (final SocketProxyServer server =
+        try (SocketProxyServer server =
                 new SocketProxyServer(serverConfig, fakeBackend);
-                final SocketProxyClient client =
+                SocketProxyClient client =
                         new SocketProxyClient(clientConfig)) {
 
             // Test clipboard

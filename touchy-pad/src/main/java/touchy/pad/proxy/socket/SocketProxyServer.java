@@ -15,11 +15,12 @@ import touchy.pad.TouchLink;
  * Implementation of serve proxy using sockets. Which means uses sockets to
  * connect to clients, those clients forward calls from the mobile device, and
  * the server proxy relais them to the backend.
- * 
+ *
  * @author Jan Groothuijse
  */
 @Slf4j
-public class SocketProxyServer implements TouchLink.ServerProxy, Runnable {
+public final class SocketProxyServer
+        implements TouchLink.ServerProxy, Runnable {
     /**
      * In production this will hold the actual implementation mousing a pointer.
      */
@@ -31,6 +32,11 @@ public class SocketProxyServer implements TouchLink.ServerProxy, Runnable {
      */
     private final ServerSocket serverSocket;
 
+    /**
+     * @param config the server, to obtain port number.
+     * @param upstream the backend that actually moves things.
+     * @throws IOException when the connection fails.
+     */
     SocketProxyServer(final SocketProxyServerConfig config,
             final TouchLink.Backend upstream) throws IOException {
         backend = upstream;
@@ -41,7 +47,7 @@ public class SocketProxyServer implements TouchLink.ServerProxy, Runnable {
     }
 
     @Override
-    public final void run() {
+    public void run() {
         // TODO Auto-generated method stub
         try {
             log.info("Listening on socket server.");
@@ -60,16 +66,19 @@ public class SocketProxyServer implements TouchLink.ServerProxy, Runnable {
         }
     }
 
-    private final void handleConnection(final Socket socket) {
+    /**
+     * @param socket the connection socket.
+     */
+    private void handleConnection(final Socket socket) {
         log.info("handleConnection called");
-        try (final ObjectOutputStream output =
+        try (ObjectOutputStream output =
                 new ObjectOutputStream(socket.getOutputStream())) {
 
             // Flush to unfreeze the ObjectInputStream on the other side, see
             // new ObjectInputStream().
             output.flush();
 
-            try (final ObjectInputStream input =
+            try (ObjectInputStream input =
                     new ObjectInputStream(socket.getInputStream());) {
                 // While the connection is open, we expect the client to send
                 // a method proxy and wiat for the result to be returned.
