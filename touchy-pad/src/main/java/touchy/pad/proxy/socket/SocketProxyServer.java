@@ -1,5 +1,6 @@
 package touchy.pad.proxy.socket;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -72,7 +73,7 @@ public class SocketProxyServer implements TouchLink.ServerProxy, Runnable {
                     new ObjectInputStream(socket.getInputStream());) {
                 // While the connection is open, we expect the client to send
                 // a method proxy and wiat for the result to be returned.
-                while (!socket.isClosed()) {
+                while (!socket.isClosed() && !serverSocket.isClosed()) {
                     log.info("Waiting for client input");
                     // Allow the client to send what needs to be done.
                     try {
@@ -81,6 +82,8 @@ public class SocketProxyServer implements TouchLink.ServerProxy, Runnable {
                         // Return the result of
                         final Object result = methodProxy.apply(backend);
                         output.writeObject(result);
+                    } catch (EOFException e) {
+                        log.error("Connection was closed.");
                     } catch (ClassNotFoundException e) {
                         log.error("Dropping message received from client"
                                 + ", writing back a null value", e);

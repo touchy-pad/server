@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.awt.Point;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Supplier;
 
 import org.junit.Test;
 
@@ -49,14 +50,14 @@ public class SocketProxyTest {
             }
 
             @Override
-            public Point move(Point delta, boolean left, boolean middle,
-                    boolean right) {
-                return delta;
+            public Supplier<Point> move(Point delta, boolean left,
+                    boolean middle, boolean right) {
+                return () -> delta;
             }
 
             @Override
-            public String getClipboard() {
-                return clipboard;
+            public Supplier<String> getClipboard() {
+                return () -> clipboard;
             }
         };
         final SocketProxyServerConfig serverConfig =
@@ -86,7 +87,7 @@ public class SocketProxyTest {
                         new SocketProxyClient(clientConfig)) {
 
             // Test clipboard
-            assertEquals(clipboard, client.getClipboard());
+            assertEquals(clipboard, client.getClipboard().get());
 
             // Test scrolling
             assertFalse(scrolled.get());
@@ -100,7 +101,7 @@ public class SocketProxyTest {
 
             // Test moving
             final Point point = new Point(0, 0);
-            assertEquals(point, client.move(point, true, true, true));
+            assertEquals(point, client.move(point, true, true, true).get());
         }
     }
 }

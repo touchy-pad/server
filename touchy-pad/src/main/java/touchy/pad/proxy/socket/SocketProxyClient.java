@@ -7,6 +7,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,27 +25,26 @@ public class SocketProxyClient implements TouchLink.ClientProxy, AutoCloseable {
     /**
      * Reference to close.
      */
-    private final Socket client;
-
-    /**
-     * Reference to close.
-     */
     private final SendReceive sendReceive;
 
     public SocketProxyClient(final SocketProxyClientConfig config)
             throws UnknownHostException, IOException {
         log.info("Creating client connection.");
 
-        client = new Socket(config.getHost(), config.getPort());
+        final Socket client = new Socket(config.getHost(), config.getPort());
         final ObjectOutputStream output;
         output = new ObjectOutputStream(client.getOutputStream());
+        log.info("Created client output.");
         // Flush to unfreeze the ObjectInputStream on the other side, see new
         // ObjectInputStream().
         output.flush();
+        log.info("Flushed.");
         final ObjectInputStream input;
         input = new ObjectInputStream(client.getInputStream());
+        log.info("creating sendReceive.");
 
-        sendReceive = new SendReceive(output, input);
+        sendReceive = new SendReceive(client, output, input);
+        log.info("created sendReceive.");
     }
 
     /**
@@ -59,6 +59,11 @@ public class SocketProxyClient implements TouchLink.ClientProxy, AutoCloseable {
         /**
          * Reference to close.
          */
+        private final Socket client;
+
+        /**
+         * Reference to close.
+         */
         private final ObjectOutputStream output;
 
         /**
@@ -67,7 +72,7 @@ public class SocketProxyClient implements TouchLink.ClientProxy, AutoCloseable {
         private final ObjectInputStream input;
 
         @Override
-        public Object apply(MethodProxy proxy) {
+        public Object apply(final MethodProxy proxy) {
             synchronized (this) {
                 try {
                     try {
@@ -90,15 +95,17 @@ public class SocketProxyClient implements TouchLink.ClientProxy, AutoCloseable {
         public void close() throws Exception {
             output.close();
             input.close();
+            client.close();
         }
 
     }
 
     @Override
-    public Point move(final Point delta, final boolean left,
+    public Supplier<Point> move(final Point delta, final boolean left,
             final boolean middle, final boolean right) {
-        return (Point) sendReceive
+        final Point point = (Point) sendReceive
                 .apply(new MethodProxy.Move(delta, right, right, right));
+        return () -> point;
     }
 
     @Override
@@ -112,13 +119,14 @@ public class SocketProxyClient implements TouchLink.ClientProxy, AutoCloseable {
     }
 
     @Override
-    public String getClipboard() {
-        return (String) sendReceive.apply(new MethodProxy.GetClipboard());
+    public Supplier<String> getClipboard() {
+        final String string =
+                (String) sendReceive.apply(new MethodProxy.GetClipboard());
+        return () -> string;
     }
 
     @Override
     public void close() throws Exception {
         sendReceive.close();
-        client.close();
     }
 }

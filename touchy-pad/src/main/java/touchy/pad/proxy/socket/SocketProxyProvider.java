@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
+import touchy.pad.ProxyInitializationException;
 import touchy.pad.ProxyProvider;
 import touchy.pad.TouchLink;
 import touchy.pad.TouchLink.ClientProxy;
@@ -33,25 +34,26 @@ public class SocketProxyProvider implements ProxyProvider {
     final SocketProxyClientConfig clientConfig;
 
     @Override
-    public ServerProxy getAndStartServer(TouchLink.Backend backEnd) {
+    public ServerProxy getAndStartServer(final TouchLink.Backend backEnd)
+            throws ProxyInitializationException {
 
         try {
             return new SocketProxyServer(serverConfig, backEnd);
         } catch (IOException e) {
-            // TODO handle these errors in the interface, so that the user may
+            // Handle these errors in the interface, so that the user may
             // change config and/or retry.
-            return null;
+            throw new ProxyInitializationException(e);
         }
     }
 
     @Override
-    public ClientProxy getClient() {
+    public ClientProxy getClient() throws ProxyInitializationException {
         try {
             return new SocketProxyClient(clientConfig);
         } catch (IOException e) {
-            // TODO handle these errors in the interface, so that the user may
+            // Handle these errors in the interface, so that the user may
             // change config and/or retry.
-            return null;
+            throw new ProxyInitializationException(e);
         }
     }
 

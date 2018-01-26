@@ -6,6 +6,7 @@ import java.awt.Point;
 import java.awt.Robot;
 import java.awt.event.InputEvent;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Supplier;
 
 import touchy.pad.TouchLink;
 
@@ -43,7 +44,7 @@ public class AwtTouchLink implements TouchLink {
     }
 
     @Override
-    public Point move(final Point delta, final boolean left,
+    public Supplier<Point> move(final Point delta, final boolean left,
             final boolean middle, final boolean right) {
         // move first, click release later
         final Point pre = MouseInfo.getPointerInfo().getLocation();
@@ -53,7 +54,7 @@ public class AwtTouchLink implements TouchLink {
         handleMousePress(middleDown, middle, InputEvent.BUTTON2_DOWN_MASK);
         handleMousePress(rightDown, right, InputEvent.BUTTON3_DOWN_MASK);
 
-        return MouseInfo.getPointerInfo().getLocation();
+        return () -> MouseInfo.getPointerInfo().getLocation();
     }
 
     /**
@@ -90,14 +91,12 @@ public class AwtTouchLink implements TouchLink {
 
     @Override
     public void typeText(final String text) {
-        // TODO Auto-generated method stub
 
     }
 
     @Override
-    public String getClipboard() {
-        // TODO Auto-generated method stub
-        return null;
+    public Supplier<String> getClipboard() {
+        return () -> null;
     }
 
 }

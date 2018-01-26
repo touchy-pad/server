@@ -1,6 +1,7 @@
 package touchy.pad;
 
 import java.awt.Point;
+import java.util.function.Supplier;
 
 /**
  * Interface to the object moving the pointer on the screen of the PC.
@@ -19,7 +20,8 @@ public interface TouchLink {
      * @param click whether or not to click.
      * @return the new position, so after moving and potentially clicking.
      */
-    Point move(Point delta, boolean left, boolean middle, boolean right);
+    Supplier<Point> move(Point delta, boolean left, boolean middle,
+            boolean right);
 
     /**
      * Lets the desktop scroll some amount of lines, returns the number of lines
@@ -41,7 +43,7 @@ public interface TouchLink {
     /**
      * @return the textual contents of the clipboard.
      */
-    String getClipboard();
+    Supplier<String> getClipboard();
 
     /**
      * Flavor of TouchLink to indicate that the implementation live on the

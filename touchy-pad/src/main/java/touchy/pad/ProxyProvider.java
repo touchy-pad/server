@@ -19,7 +19,8 @@ public interface ProxyProvider {
      * 
      * @return a running server.
      */
-    TouchLink.ServerProxy getAndStartServer(TouchLink.Backend backEnd);
+    TouchLink.ServerProxy getAndStartServer(TouchLink.Backend backEnd)
+            throws ProxyInitializationException;
 
     /**
      * Creates a new client and connects to the server. Should be called on the
@@ -29,5 +30,5 @@ public interface ProxyProvider {
      * 
      * @return a client proxy, connected to the server.
      */
-    TouchLink.ClientProxy getClient();
+    TouchLink.ClientProxy getClient() throws ProxyInitializationException;
 }
