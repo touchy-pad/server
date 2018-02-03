@@ -21,16 +21,6 @@ public final class NoRuntimeConfigurationBackend
     }
 
     @Override
-    public Byte getByte(final String name) {
-        return null;
-    }
-
-    @Override
-    public Character getChar(final String name) {
-        return null;
-    }
-
-    @Override
     public Integer getInteger(final String name) {
         return null;
     }
@@ -52,11 +42,6 @@ public final class NoRuntimeConfigurationBackend
 
     @Override
     public String getString(final String name) {
-        return null;
-    }
-
-    @Override
-    public Short getShort(final String name) {
         return null;
     }
 }

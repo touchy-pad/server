@@ -9,6 +9,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
+import touchy.pad.RuntimeConfiguration.Util;
 import touchy.pad.RuntimeConfigurationBackend;
 
 /**
@@ -35,8 +36,6 @@ public final class RuntimeConfigurationAspect {
     private final RuntimeConfigurationBackend backEnd;
 
     /**
-     * Contains naming scheme.
-     *
      * @param <E> type of the return.
      * @param joinPoint to get the name from.
      * @param getValue callback to get a value of the correct type.
@@ -49,8 +48,9 @@ public final class RuntimeConfigurationAspect {
             final Function<String, E> getValue) throws Throwable {
         final Signature methodSignature = joinPoint.getSignature();
         // Naming scheme:
-        final String name = methodSignature.getDeclaringType().getName() + "."
-                + methodSignature.getName();
+        final String name;
+        name = Util.getConfigName(methodSignature.getDeclaringType(),
+                methodSignature.getName());
 
         final E configured = getValue.apply(name);
         if (configured == null) {
@@ -69,39 +69,6 @@ public final class RuntimeConfigurationAspect {
     public Boolean booleanMethod(final ProceedingJoinPoint joinPoint)
             throws Throwable {
         return getConfiguredOrDefault(joinPoint, backEnd::getBoolean);
-    }
-
-    /**
-     * @param joinPoint to get the name of
-     * @return the final value for this configuration.
-     * @throws Throwable when something went wrong.
-     */
-    @Around("execution(@touchy.pad.RuntimeConfiguration byte *..*.*())")
-    public Byte byteMethod(final ProceedingJoinPoint joinPoint)
-            throws Throwable {
-        return getConfiguredOrDefault(joinPoint, backEnd::getByte);
-    }
-
-    /**
-     * @param joinPoint to get the name of
-     * @return the final value for this configuration.
-     * @throws Throwable when something went wrong.
-     */
-    @Around("execution(@touchy.pad.RuntimeConfiguration char *..*.*())")
-    public Character charMethod(final ProceedingJoinPoint joinPoint)
-            throws Throwable {
-        return getConfiguredOrDefault(joinPoint, backEnd::getChar);
-    }
-
-    /**
-     * @param joinPoint to get the name of
-     * @return the final value for this configuration.
-     * @throws Throwable when something went wrong.
-     */
-    @Around("execution(@touchy.pad.RuntimeConfiguration short *..*.*())")
-    public Short shortMethod(final ProceedingJoinPoint joinPoint)
-            throws Throwable {
-        return getConfiguredOrDefault(joinPoint, backEnd::getShort);
     }
 
     /**

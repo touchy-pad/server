@@ -81,7 +81,7 @@ public final class SocketProxyServer
             try (ObjectInputStream input =
                     new ObjectInputStream(socket.getInputStream());) {
                 // While the connection is open, we expect the client to send
-                // a method proxy and wiat for the result to be returned.
+                // a method proxy and wait for the result to be returned.
                 while (!socket.isClosed() && !serverSocket.isClosed()) {
                     log.info("Waiting for client input");
                     // Allow the client to send what needs to be done.

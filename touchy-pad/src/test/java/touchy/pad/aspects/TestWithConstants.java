@@ -10,6 +10,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import touchy.pad.RuntimeConfigurationBackend;
+import touchy.pad.SomeConfig;
 import touchy.pad.SpringConfig;
 import touchy.pad.backend.ConstantRuntimeConfigurationBackend;
 
@@ -79,48 +80,6 @@ public final class TestWithConstants {
                 "We expect the proxied result to match the backend for"
                         + " booleans.",
                 advised.getBoolean(""), someConfig.someBool());
-    }
-
-    // when getting getting a Byte from the config,
-    /**
-     * Tests that Byte methods are advised.
-     */
-    @Test
-    public void testByteInjection() {
-        assertEquals("We expect the non-proxied instance to return 0.",
-                TestWithConstants.NAKED.someByte(), 0);
-        assertEquals(
-                "We expect the proxied result to match the backend for"
-                        + " Bytes.",
-                advised.getByte(""), (Byte) someConfig.someByte());
-    }
-
-    // when getting getting a Char from the config,
-    /**
-     * Tests that Char methods are advised.
-     */
-    @Test
-    public void testCharInjection() {
-        assertEquals("We expect the non-proxied instance to return 0.",
-                TestWithConstants.NAKED.someChar(), 0);
-        assertEquals(
-                "We expect the proxied result to match the backend for"
-                        + " Chars.",
-                advised.getChar(""), (Character) someConfig.someChar());
-    }
-
-    // when getting getting a Short from the config,
-    /**
-     * Tests that Short methods are advised.
-     */
-    @Test
-    public void testShortInjection() {
-        assertEquals("We expect the non-proxied instance to return 0.",
-                TestWithConstants.NAKED.someShort(), 0);
-        assertEquals(
-                "We expect the proxied result to match the backend for"
-                        + " Shorts.",
-                advised.getShort(""), (Short) someConfig.someShort());
     }
 
     // when getting getting a Int from the config,

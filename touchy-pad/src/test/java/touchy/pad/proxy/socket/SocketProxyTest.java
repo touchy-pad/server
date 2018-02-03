@@ -11,6 +11,8 @@ import java.util.function.Supplier;
 import org.junit.Test;
 
 import touchy.pad.TouchLink;
+import touchy.pad.TouchLink.ClientProxy;
+import touchy.pad.TouchLink.ServerProxy;
 
 /**
  * Unit tests the socket proxy client en socket proxy server.
@@ -81,10 +83,10 @@ public final class SocketProxyTest {
                     }
                 };
 
-        try (SocketProxyServer server =
-                new SocketProxyServer(serverConfig, fakeBackend);
-                SocketProxyClient client =
-                        new SocketProxyClient(clientConfig)) {
+        final SocketProxyProvider provider =
+                new SocketProxyProvider(serverConfig, clientConfig);
+        try (ServerProxy server = provider.getAndStartServer(fakeBackend);
+                ClientProxy client = provider.getClient()) {
 
             // Test clipboard
             assertEquals(clipboard, client.getClipboard().get());
@@ -103,5 +105,13 @@ public final class SocketProxyTest {
             final Point point = new Point(0, 0);
             assertEquals(point, client.move(point, true, true, true).get());
         }
+
+        final SocketProxyServer server =
+                new SocketProxyServer(serverConfig, fakeBackend);
+        final SocketProxyClient client = new SocketProxyClient(clientConfig);
+
+        client.close();
+        server.close();
+
     }
 }

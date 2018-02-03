@@ -21,16 +21,6 @@ public final class ConstantRuntimeConfigurationBackend
     }
 
     @Override
-    public Byte getByte(final String name) {
-        return 1;
-    }
-
-    @Override
-    public Character getChar(final String name) {
-        return 'a';
-    }
-
-    @Override
     public Integer getInteger(final String name) {
         return 1;
     }
@@ -54,10 +44,4 @@ public final class ConstantRuntimeConfigurationBackend
     public String getString(final String name) {
         return "string";
     }
-
-    @Override
-    public Short getShort(final String name) {
-        return 1;
-    }
-
 }

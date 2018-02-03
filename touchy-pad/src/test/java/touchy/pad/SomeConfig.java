@@ -1,6 +1,4 @@
-package touchy.pad.aspects;
-
-import touchy.pad.RuntimeConfiguration;
+package touchy.pad;
 
 /**
  * Toy config to test all primitives.
@@ -15,30 +13,6 @@ public interface SomeConfig {
     @RuntimeConfiguration
     default boolean someBool() {
         return false;
-    }
-
-    /**
-     * @return a byte.
-     */
-    @RuntimeConfiguration
-    default byte someByte() {
-        return 0;
-    }
-
-    /**
-     * @return a char.
-     */
-    @RuntimeConfiguration
-    default char someChar() {
-        return 0;
-    }
-
-    /**
-     * @return a short.
-     */
-    @RuntimeConfiguration
-    default short someShort() {
-        return 0;
     }
 
     /**

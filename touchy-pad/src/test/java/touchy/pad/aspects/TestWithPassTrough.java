@@ -9,6 +9,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import touchy.pad.SomeConfig;
 import touchy.pad.SpringConfig;
 
 // given a configuration backend that always returns null,
@@ -38,42 +39,6 @@ public final class TestWithPassTrough {
                 "We expect the non-proxied instance and the non-"
                         + "provied instance to return the same.",
                 TestWithConstants.NAKED.someBool(), someConfig.someBool());
-    }
-
-    // when getting getting a Byte from the config,
-    /**
-     * Tests that Byte methods are advised.
-     */
-    @Test
-    public void testBytePassthrough() {
-        assertEquals(
-                "We expect the non-proxied instance and the non-"
-                        + "provied instance to return the same.",
-                TestWithConstants.NAKED.someByte(), someConfig.someByte());
-    }
-
-    // when getting getting a Char from the config,
-    /**
-     * Tests that Char methods are advised.
-     */
-    @Test
-    public void testCharPassthrough() {
-        assertEquals(
-                "We expect the non-proxied instance and the non-"
-                        + "provied instance to return the same.",
-                TestWithConstants.NAKED.someChar(), someConfig.someChar());
-    }
-
-    // when getting getting a Short from the config,
-    /**
-     * Tests that Short methods are advised.
-     */
-    @Test
-    public void testShortPassthrough() {
-        assertEquals(
-                "We expect the non-proxied instance and the non-"
-                        + "provied instance to return the same.",
-                TestWithConstants.NAKED.someShort(), someConfig.someShort());
     }
 
     // when getting getting a Integer from the config,
