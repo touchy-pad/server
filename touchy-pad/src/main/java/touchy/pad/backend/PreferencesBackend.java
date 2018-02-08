@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import lombok.extern.slf4j.Slf4j;
 import touchy.pad.RuntimeConfigurationBackend;
 
 /**
@@ -15,7 +14,6 @@ import touchy.pad.RuntimeConfigurationBackend;
  * 
  * @author Jan Groothuijse
  */
-@Slf4j
 @Component
 @Profile("preferences")
 public final class PreferencesBackend implements RuntimeConfigurationBackend {

@@ -17,5 +17,7 @@ interface ManualTest {
         final AwtTouchLink sut = new AwtTouchLink();
         final int distance = 100;
         sut.move(new Point(distance, distance), false, false, false);
+
+        // sut.typeText("fooo");
     }
 }

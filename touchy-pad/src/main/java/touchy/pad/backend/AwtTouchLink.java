@@ -1,13 +1,25 @@
 package touchy.pad.backend;
 
 import java.awt.AWTException;
+import java.awt.HeadlessException;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Robot;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
+import org.apache.commons.io.IOUtils;
+
+import lombok.extern.slf4j.Slf4j;
 import touchy.pad.TouchLink;
 
 /**
@@ -17,6 +29,7 @@ import touchy.pad.TouchLink;
  *
  * @author Jan Groothuijse
  */
+@Slf4j
 public final class AwtTouchLink implements TouchLink {
 
     /**
@@ -95,12 +108,31 @@ public final class AwtTouchLink implements TouchLink {
 
     @Override
     public void typeText(final String text) {
-
+        final Clipboard clipboard;
+        clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(new StringSelection(text), null);
+        robot.keyPress(KeyEvent.VK_CONTROL);
+        robot.keyPress(KeyEvent.VK_V);
+        robot.keyRelease(KeyEvent.VK_V);
+        robot.keyRelease(KeyEvent.VK_CONTROL);
     }
 
     @Override
     public Supplier<String> getClipboard() {
-        return () -> null;
+        try {
+            final String content;
+            final Transferable transferable;
+            final DataFlavor flavor = new DataFlavor();
+            final Toolkit toolkit = Toolkit.getDefaultToolkit();
+            transferable = toolkit.getSystemClipboard().getContents(null);
+            content = IOUtils.toString(flavor.getReaderForText(transferable));
+            return () -> content;
+        } catch (HeadlessException | IOException
+                | UnsupportedFlavorException e) {
+            log.error("Exception while getting clipboard contents", e);
+            return () -> "";
+        }
+
     }
 
 }
