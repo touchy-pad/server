@@ -64,7 +64,7 @@ public class ProxySocketConfigTest {
         final SocketProxyProvider provider;
         provider = new SocketProxyProvider(null, config);
 
-        provider.getClient();
+        provider.getClient(null);
     }
 
     /**

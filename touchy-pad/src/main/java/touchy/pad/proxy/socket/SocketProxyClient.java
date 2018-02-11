@@ -120,12 +120,12 @@ public final class SocketProxyClient
     }
 
     @Override
-    public void typeText(final String text) {
+    public void sendClipboard(final String text) {
         sendReceive.apply(new MethodProxy.TypeText(text));
     }
 
     @Override
-    public Supplier<String> getClipboard() {
+    public Supplier<String> receiveClipboard() {
         final String string =
                 (String) sendReceive.apply(new MethodProxy.GetClipboard());
         return () -> string;

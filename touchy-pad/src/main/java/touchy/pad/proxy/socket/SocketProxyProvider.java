@@ -1,6 +1,7 @@
 package touchy.pad.proxy.socket;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.stereotype.Component;
 
@@ -21,7 +22,8 @@ import touchy.pad.TouchLink.ServerProxy;
  */
 @RequiredArgsConstructor
 @Component("socketProxy")
-public final class SocketProxyProvider implements ProxyProvider {
+public final class SocketProxyProvider
+        implements ProxyProvider<DiscoveredProxyServer> {
 
     /**
      * Server config.
@@ -47,14 +49,20 @@ public final class SocketProxyProvider implements ProxyProvider {
     }
 
     @Override
-    public ClientProxy getClient() throws ProxyInitializationException {
+    public ClientProxy getClient(final DiscoveredProxyServer connectTo)
+            throws ProxyInitializationException {
         try {
             return new SocketProxyClient(clientConfig);
         } catch (IOException e) {
             // Handle these errors in the interface, so that the user may
-            // change config and/or retry.
+            // change choose another server and/or retry.
             throw new ProxyInitializationException(e);
         }
     }
 
+    @Override
+    public List<DiscoveredProxyServer> discoverServers() {
+        // TODO ImplementSocketProxyProvider.discoverServers.
+        return null;
+    }
 }

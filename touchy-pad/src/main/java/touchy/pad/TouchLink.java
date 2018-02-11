@@ -34,17 +34,16 @@ public interface TouchLink {
     void scroll(int amount);
 
     /**
-     * Types text on the PC. Can be used for typing or for sending textual
-     * clipboard contents of the mobile device.
+     * Sends a string to the clipboard of the server.
      *
      * @param text to type.
      */
-    void typeText(String text);
+    void sendClipboard(String text);
 
     /**
      * @return the textual contents of the clipboard.
      */
-    Supplier<String> getClipboard();
+    Supplier<String> receiveClipboard();
 
     /**
      * Flavor of TouchLink to indicate that the implementation live on the

@@ -42,7 +42,7 @@ public final class SocketProxyTest {
         final TouchLink.Backend fakeBackend = new TouchLink.Backend() {
 
             @Override
-            public void typeText(final String text) {
+            public void sendClipboard(final String text) {
                 typed.set(true);
             }
 
@@ -58,7 +58,7 @@ public final class SocketProxyTest {
             }
 
             @Override
-            public Supplier<String> getClipboard() {
+            public Supplier<String> receiveClipboard() {
                 return () -> clipboard;
             }
         };
@@ -86,10 +86,10 @@ public final class SocketProxyTest {
         final SocketProxyProvider provider =
                 new SocketProxyProvider(serverConfig, clientConfig);
         try (ServerProxy server = provider.getAndStartServer(fakeBackend);
-                ClientProxy client = provider.getClient()) {
+                ClientProxy client = provider.getClient(null)) {
 
             // Test clipboard
-            assertEquals(clipboard, client.getClipboard().get());
+            assertEquals(clipboard, client.receiveClipboard().get());
 
             // Test scrolling
             assertFalse(scrolled.get());
@@ -98,7 +98,7 @@ public final class SocketProxyTest {
 
             // Test typing
             assertFalse(typed.get());
-            client.typeText("");
+            client.sendClipboard("");
             assertTrue(typed.get());
 
             // Test moving

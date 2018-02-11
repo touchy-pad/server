@@ -32,7 +32,7 @@ public interface MethodProxy extends Function<TouchLink, Object>, Serializable {
 
         @Override
         public Object apply(final TouchLink arg0) {
-            return arg0.getClipboard().get();
+            return arg0.receiveClipboard().get();
         }
     }
 
@@ -113,7 +113,7 @@ public interface MethodProxy extends Function<TouchLink, Object>, Serializable {
 
         @Override
         public Object apply(final TouchLink t) {
-            t.typeText(text);
+            t.sendClipboard(text);
             return null;
         }
     }
