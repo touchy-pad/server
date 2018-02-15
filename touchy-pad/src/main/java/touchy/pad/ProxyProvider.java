@@ -1,6 +1,6 @@
 package touchy.pad;
 
-import java.util.List;
+import java.util.Queue;
 
 /**
  * Creates and starts servers and creates clients.
@@ -52,7 +52,7 @@ public interface ProxyProvider<E extends ProxyProvider.DiscoveredServer> {
      * 
      * @return list of available server, so that the client may choose one.
      */
-    List<E> discoverServers();
+    Queue<E> discoverServers();
 
     /**
      * Type to represent servers that are available to a client. Instances are
@@ -84,5 +84,15 @@ public interface ProxyProvider<E extends ProxyProvider.DiscoveredServer> {
          * @return hardware addresses, host names, device keys etc.
          */
         String getSpecification();
+
+        /**
+         * In order to select favorite or default server, we need some way to
+         * recognise the same server again when the application gets restarted.
+         * 
+         * @return an identifier of a server, that should not change over time.
+         */
+        default String getId() {
+            return getName();
+        }
     }
 }

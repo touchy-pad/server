@@ -12,7 +12,6 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
@@ -107,18 +106,14 @@ public final class AwtTouchLink implements TouchLink {
     }
 
     @Override
-    public void typeText(final String text) {
+    public void sendClipboard(final String text) {
         final Clipboard clipboard;
         clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(new StringSelection(text), null);
-        robot.keyPress(KeyEvent.VK_CONTROL);
-        robot.keyPress(KeyEvent.VK_V);
-        robot.keyRelease(KeyEvent.VK_V);
-        robot.keyRelease(KeyEvent.VK_CONTROL);
     }
 
     @Override
-    public Supplier<String> getClipboard() {
+    public Supplier<String> receiveClipboard() {
         try {
             final String content;
             final Transferable transferable;

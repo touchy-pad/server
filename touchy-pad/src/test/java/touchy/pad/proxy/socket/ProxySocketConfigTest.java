@@ -53,26 +53,6 @@ public class ProxySocketConfigTest {
      * @throws ProxyInitializationException always.
      */
     @Test(expected = ProxyInitializationException.class)
-    public void checkInsaneClientConfigLeadsToWrappedException()
-            throws ProxyInitializationException {
-        final SocketProxyClientConfig config = new SocketProxyClientConfig() {
-            public int getPort() {
-                return 1;
-            }
-        };
-
-        final SocketProxyProvider provider;
-        provider = new SocketProxyProvider(null, config);
-
-        provider.getClient(null);
-    }
-
-    /**
-     * Checks that an exception gets thrown.
-     * 
-     * @throws ProxyInitializationException always.
-     */
-    @Test(expected = ProxyInitializationException.class)
     public void checkInsaneServerConfigLeadsToWrappedException()
             throws ProxyInitializationException {
         final SocketProxyServerConfig config = new SocketProxyServerConfig() {

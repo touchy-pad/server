@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.Point;
+import java.net.InetAddress;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
@@ -83,10 +84,13 @@ public final class SocketProxyTest {
                     }
                 };
 
+        final DiscoveredProxyServer discoveredProxy;
+        discoveredProxy =
+                new DiscoveredProxyServer("", InetAddress.getLocalHost());
         final SocketProxyProvider provider =
                 new SocketProxyProvider(serverConfig, clientConfig);
         try (ServerProxy server = provider.getAndStartServer(fakeBackend);
-                ClientProxy client = provider.getClient(null)) {
+                ClientProxy client = provider.getClient(discoveredProxy)) {
 
             // Test clipboard
             assertEquals(clipboard, client.receiveClipboard().get());
@@ -108,7 +112,8 @@ public final class SocketProxyTest {
 
         final SocketProxyServer server =
                 new SocketProxyServer(serverConfig, fakeBackend);
-        final SocketProxyClient client = new SocketProxyClient(clientConfig);
+        final SocketProxyClient client =
+                new SocketProxyClient(clientConfig, discoveredProxy);
 
         client.close();
         server.close();

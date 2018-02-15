@@ -30,14 +30,17 @@ public final class SocketProxyClient
 
     /**
      * @param config to get port number and hostname.
+     * @param connectTo connect to a server.
      * @throws UnknownHostException when no connection can be made.
      * @throws IOException when the connection fails.
      */
-    public SocketProxyClient(final SocketProxyClientConfig config)
+    public SocketProxyClient(final SocketProxyClientConfig config,
+            final DiscoveredProxyServer connectTo)
             throws UnknownHostException, IOException {
         log.info("Creating client connection.");
 
-        final Socket client = new Socket(config.getHost(), config.getPort());
+        final Socket client =
+                new Socket(connectTo.getAddress(), config.getPort());
         final ObjectOutputStream output;
         output = new ObjectOutputStream(client.getOutputStream());
         log.info("Created client output.");

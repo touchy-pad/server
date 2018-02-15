@@ -4,8 +4,12 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
@@ -33,17 +37,68 @@ public final class SocketProxyServer
     private final ServerSocket serverSocket;
 
     /**
-     * @param config the server, to obtain port number.
+     * Ties lifecycle to to this objet.
+     */
+    private final DatagramSocket datagramSocket;
+
+    /**
+     * Configuration relevant to the server.
+     */
+    private final SocketProxyServerConfig config;
+
+    /**
+     * @param conf the server, to obtain port number.
      * @param upstream the backend that actually moves things.
      * @throws IOException when the connection fails.
      */
-    SocketProxyServer(final SocketProxyServerConfig config,
+    SocketProxyServer(final SocketProxyServerConfig conf,
             final TouchLink.Backend upstream) throws IOException {
         backend = upstream;
+        this.config = conf;
+        // Listen on a port for connection.
         log.info("Creating server socket on port: " + config.getPort());
         serverSocket = new ServerSocket(config.getPort());
         log.info("Starting thread to accept connections.");
         new Thread(this).start(); // calls run in a new thread.
+
+        // Be discoverable through broadcast
+        final InetAddress address;
+        address = InetAddress.getByName("0.0.0.0");
+        datagramSocket = new DatagramSocket(config.getDiscoveryPort(), address);
+        datagramSocket.setBroadcast(true);
+        new Thread(this::makeDiscoverable).start();
+    }
+
+    /**
+     * Makes this server discoverable through the udp socket.
+     */
+    public void makeDiscoverable() {
+        final int bufferSize = 15000;
+        while (true) {
+            final byte[] buffer = new byte[bufferSize];
+            final DatagramPacket packet;
+            packet = new DatagramPacket(buffer, bufferSize);
+            try {
+                System.out.println("Server: Waiting for packet");
+                datagramSocket.receive(packet);
+                final String message = new String(packet.getData()).trim();
+                final byte[] sendData = config.getServerName().getBytes();
+                if (message.equals(config.getDiscoveryRequest())) {
+                    final DatagramPacket sendPacket;
+                    sendPacket = new DatagramPacket(sendData, sendData.length,
+                            packet.getAddress(), packet.getPort());
+                    datagramSocket.send(sendPacket);
+                    System.out.println("Server: send to "
+                            + sendPacket.getAddress().getHostAddress());
+                }
+            } catch (SocketException e) {
+                // socket closed.
+                break;
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -122,5 +177,8 @@ public final class SocketProxyServer
         } catch (IOException e) {
             log.error("Error closing server socket", e);
         }
+
+        log.info("Closing discovery socket");
+        datagramSocket.close();
     }
 }
