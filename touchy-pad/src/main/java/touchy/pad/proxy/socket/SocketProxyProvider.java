@@ -7,8 +7,8 @@ import java.net.InetAddress;
 import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
 import java.util.Collections;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.springframework.stereotype.Component;
 
@@ -68,9 +68,9 @@ public final class SocketProxyProvider
     }
 
     @Override
-    public Queue<DiscoveredProxyServer> discoverServers() {
-        final ConcurrentLinkedQueue<DiscoveredProxyServer> list;
-        list = new ConcurrentLinkedQueue<>();
+    public CloseableQueueProvider<DiscoveredProxyServer> discoverServers() {
+        final BlockingQueue<DiscoveredProxyServer> list;
+        list = new LinkedBlockingQueue<>();
         try {
             final DatagramSocket datagramSocket;
             datagramSocket = new DatagramSocket();
@@ -112,7 +112,7 @@ public final class SocketProxyProvider
             final byte[] buffer = new byte[bufferSize];
             final DatagramPacket receivePacket;
             receivePacket = new DatagramPacket(buffer, buffer.length);
-            new Thread(() -> {
+            Thread thread = new Thread(() -> {
                 try {
                     // Quit at the first sign of trouble.
                     while (true) {
@@ -132,12 +132,32 @@ public final class SocketProxyProvider
 
                 }
             });
-            datagramSocket.close();
+            thread.start();
+            return new CloseableQueueProvider<DiscoveredProxyServer>() {
 
-            return null;
+                @Override
+                public BlockingQueue<DiscoveredProxyServer> get() {
+                    return list;
+                }
+
+                @Override
+                public void close() {
+                    datagramSocket.close();
+                }
+            };
         } catch (Exception e) {
+            return new CloseableQueueProvider<DiscoveredProxyServer>() {
 
+                @Override
+                public BlockingQueue<DiscoveredProxyServer> get() {
+                    return null;
+                }
+
+                @Override
+                public void close() throws IOException {
+
+                }
+            };
         }
-        return list;
     }
 }

@@ -1,6 +1,10 @@
 package touchy.pad;
 
-import java.util.Queue;
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.concurrent.BlockingQueue;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Creates and starts servers and creates clients.
@@ -19,6 +23,20 @@ import java.util.Queue;
  *            to connect to the server.
  */
 public interface ProxyProvider<E extends ProxyProvider.DiscoveredServer> {
+
+    /**
+     * Combines lifecycle and queue of discovery.
+     * 
+     * @author Jan Groothuijse
+     *
+     * @param <E> Type of discovered servers.
+     */
+    public interface CloseableQueueProvider<
+            E extends ProxyProvider.DiscoveredServer>
+            extends Supplier<BlockingQueue<E>>, Closeable {
+
+    }
+
     /**
      * ProxyProvider Creates a server, which begins listener and returns it.
      * Should be called on the server side of the application, running on the
@@ -52,7 +70,21 @@ public interface ProxyProvider<E extends ProxyProvider.DiscoveredServer> {
      * 
      * @return list of available server, so that the client may choose one.
      */
-    Queue<E> discoverServers();
+    CloseableQueueProvider<E> discoverServers();
+
+    /**
+     * Handles lifecycle management.
+     * 
+     * @param fun what to do with the blocking queue.
+     * @return what fun returned.
+     */
+    default <F> F withDiscoveredServer(Function<BlockingQueue<E>, F> fun) {
+        try (CloseableQueueProvider<E> queueSupplier = discoverServers()) {
+            return fun.apply(queueSupplier.get());
+        } catch (IOException e) {
+            return null;
+        }
+    }
 
     /**
      * Type to represent servers that are available to a client. Instances are
