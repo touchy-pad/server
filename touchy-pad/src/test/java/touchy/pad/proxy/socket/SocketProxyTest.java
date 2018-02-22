@@ -176,7 +176,7 @@ public final class SocketProxyTest {
         assertFalse(typed.get());
         client.sendClipboard("");
         assertTrue(typed.get());
-
+        discovered.close();
         server.close();
         client.close();
     }

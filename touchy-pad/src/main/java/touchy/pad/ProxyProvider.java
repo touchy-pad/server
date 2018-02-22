@@ -1,9 +1,7 @@
 package touchy.pad;
 
 import java.io.Closeable;
-import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -73,20 +71,6 @@ public interface ProxyProvider<E extends ProxyProvider.DiscoveredServer> {
     CloseableQueueProvider<E> discoverServers();
 
     /**
-     * Handles lifecycle management.
-     * 
-     * @param fun what to do with the blocking queue.
-     * @return what fun returned.
-     */
-    default <F> F withDiscoveredServer(Function<BlockingQueue<E>, F> fun) {
-        try (CloseableQueueProvider<E> queueSupplier = discoverServers()) {
-            return fun.apply(queueSupplier.get());
-        } catch (IOException e) {
-            return null;
-        }
-    }
-
-    /**
      * Type to represent servers that are available to a client. Instances are
      * used to refer to a server to connect to.
      * 
@@ -99,6 +83,8 @@ public interface ProxyProvider<E extends ProxyProvider.DiscoveredServer> {
      * identify the server and make an informed decision to to connect to a
      * specific server. Derived classes implement some unspecified logic so that
      * the getClient method connects to the correct server.
+     * 
+     * Implementors are expected to implement hash.
      * 
      * @author Jan Groothuijse
      */
@@ -116,15 +102,5 @@ public interface ProxyProvider<E extends ProxyProvider.DiscoveredServer> {
          * @return hardware addresses, host names, device keys etc.
          */
         String getSpecification();
-
-        /**
-         * In order to select favorite or default server, we need some way to
-         * recognise the same server again when the application gets restarted.
-         * 
-         * @return an identifier of a server, that should not change over time.
-         */
-        default String getId() {
-            return getName();
-        }
     }
 }

@@ -9,7 +9,6 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
@@ -91,12 +90,9 @@ public final class SocketProxyServer
                     System.out.println("Server: send to "
                             + sendPacket.getAddress().getHostAddress());
                 }
-            } catch (SocketException e) {
+            } catch (IOException e) {
                 // socket closed.
                 break;
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
             }
         }
     }
@@ -148,35 +144,24 @@ public final class SocketProxyServer
                         output.writeObject(result);
                     } catch (EOFException e) {
                         log.error("Connection was closed.");
-                    } catch (ClassNotFoundException e) {
-                        log.error("Dropping message received from client"
-                                + ", writing back a null value", e);
-                        output.writeObject(null);
+                        break;
                     }
                 }
                 log.info("Socket is closed.");
             }
 
-        } catch (IOException e1) {
-            log.error("Network error, closing socket", e1);
-            try {
-                socket.close();
-            } catch (IOException e2) {
-                log.error("Failed to close the socket.");
-            }
+        } catch (IOException | ClassNotFoundException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
         }
     }
 
     @Override
-    public void close() {
+    public void close() throws IOException {
         // Closing the socket causes all blocked accept() method calls to return
         // with a socket exception.
-        try {
-            log.info("Closing server socket");
-            serverSocket.close();
-        } catch (IOException e) {
-            log.error("Error closing server socket", e);
-        }
+        log.info("Closing server socket");
+        serverSocket.close();
 
         log.info("Closing discovery socket");
         datagramSocket.close();

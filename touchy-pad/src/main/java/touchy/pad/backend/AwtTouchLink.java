@@ -1,9 +1,9 @@
 package touchy.pad.backend;
 
 import java.awt.AWTException;
-import java.awt.HeadlessException;
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.PointerInfo;
 import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -17,7 +17,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
 import org.apache.commons.io.IOUtils;
+import org.springframework.stereotype.Component;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import touchy.pad.TouchLink;
 
@@ -46,16 +49,13 @@ public final class AwtTouchLink implements TouchLink {
     /**
      * Upstream, the thing that moves the pointer etc.
      */
-    private final Robot robot;
+    private final AwtSupplier awtSupplier;
 
     /**
-     * Constructor, because new Robot throws.
-     *
-     * @throws AWTException when AWT is unavailabe, probably on a headless
-     *             system.
+     * @param r awtSupplier to use.
      */
-    public AwtTouchLink() throws AWTException {
-        robot = new Robot();
+    public AwtTouchLink(final AwtSupplier r) {
+        awtSupplier = r;
     }
 
     @Override
@@ -64,13 +64,13 @@ public final class AwtTouchLink implements TouchLink {
         // move first, click release later
         final Point pre;
         pre = MouseInfo.getPointerInfo().getLocation();
-        robot.mouseMove(delta.x + pre.x, delta.y + pre.y);
+        awtSupplier.getRobot().mouseMove(delta.x + pre.x, delta.y + pre.y);
         // handle clicks
         handleMousePress(leftDown, left, InputEvent.BUTTON1_DOWN_MASK);
         handleMousePress(middleDown, middle, InputEvent.BUTTON2_DOWN_MASK);
         handleMousePress(rightDown, right, InputEvent.BUTTON3_DOWN_MASK);
 
-        return () -> MouseInfo.getPointerInfo().getLocation();
+        return () -> awtSupplier.getPointerInfo().getLocation();
     }
 
     /**
@@ -93,23 +93,21 @@ public final class AwtTouchLink implements TouchLink {
             // Now that we now a change is needed, we query wanted to see where
             // we are going.
             if (wanted) {
-                robot.mousePress(button);
+                awtSupplier.getRobot().mousePress(button);
             } else {
-                robot.mouseRelease(button);
+                awtSupplier.getRobot().mouseRelease(button);
             }
         }
     }
 
     @Override
     public void scroll(final int amount) {
-        robot.mouseWheel(amount);
+        awtSupplier.getRobot().mouseWheel(amount);
     }
 
     @Override
     public void sendClipboard(final String text) {
-        final Clipboard clipboard;
-        clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        clipboard.setContents(new StringSelection(text), null);
+        awtSupplier.getClipboard().setContents(new StringSelection(text), null);
     }
 
     @Override
@@ -117,17 +115,70 @@ public final class AwtTouchLink implements TouchLink {
         try {
             final String content;
             final Transferable transferable;
-            final DataFlavor flavor = new DataFlavor();
-            final Toolkit toolkit = Toolkit.getDefaultToolkit();
-            transferable = toolkit.getSystemClipboard().getContents(null);
+            final DataFlavor flavor = new DataFlavor(String.class, "text");
+            transferable = awtSupplier.getClipboard().getContents(null);
             content = IOUtils.toString(flavor.getReaderForText(transferable));
             return () -> content;
-        } catch (HeadlessException | IOException
-                | UnsupportedFlavorException e) {
+        } catch (IOException | UnsupportedFlavorException e) {
             log.error("Exception while getting clipboard contents", e);
             return () -> "";
         }
 
     }
 
+    /**
+     * Decouples AWT dependencies, so they can be mocked.
+     * 
+     * @author Jan Groothuijse
+     */
+    interface AwtSupplier {
+        /**
+         * @return Robot instance to move cursor.
+         */
+        Robot getRobot();
+
+        /**
+         * @return Clipboard instance to manipulate.
+         */
+        Clipboard getClipboard();
+
+        /**
+         * @return to query the mouse position.
+         */
+        PointerInfo getPointerInfo();
+    }
+
+    /**
+     * Default, production implementation. Needs to run on a non-headless
+     * system.
+     * 
+     * @author Jan Groothuijse
+     */
+    @Component
+    @AllArgsConstructor
+    @Getter
+    public static class AwtSupplierImpl implements AwtSupplier {
+
+        /**
+         * Awt robot instance.
+         */
+        private final Robot robot;
+        /**
+         * Clipboard of the system.
+         */
+        private final Clipboard clipboard;
+        /**
+         * To query the mouse position.
+         */
+        private final PointerInfo pointerInfo;
+
+        /**
+         * @throws AWTException when run on a non-headless system.
+         */
+        AwtSupplierImpl() throws AWTException {
+            robot = new Robot();
+            clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            pointerInfo = MouseInfo.getPointerInfo();
+        }
+    }
 }

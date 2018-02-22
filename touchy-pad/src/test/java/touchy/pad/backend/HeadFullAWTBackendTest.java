@@ -1,13 +1,18 @@
 package touchy.pad.backend;
 
-import static org.junit.Assert.assertNotEquals;
-
 import java.awt.AWTException;
 import java.awt.Point;
+import java.awt.PointerInfo;
+import java.awt.Robot;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import touchy.pad.TouchLink;
+import touchy.pad.backend.AwtTouchLink.AwtSupplier;
+import touchy.pad.backend.AwtTouchLink.AwtSupplierImpl;
 
 /**
  * Test that needs a dekstop to run.
@@ -26,12 +31,16 @@ public class HeadFullAWTBackendTest {
      * 
      * @throws AWTException when the test is run headless.
      */
-    public HeadFullAWTBackendTest() throws AWTException {
-        if (System.getProperty("java.awt.headless") == "false") {
-            sut = new AwtTouchLink();
-        } else {
-            sut = null;
-        }
+    public HeadFullAWTBackendTest() {
+        final Robot mockRobot = Mockito.mock(Robot.class);
+        final Clipboard mockClipboard = Mockito.mock(Clipboard.class);
+        Mockito.when(mockClipboard.getContents(null))
+                .thenReturn(new StringSelection(""));
+        final PointerInfo mockPointerInfo = Mockito.mock(PointerInfo.class);
+        final AwtSupplier awtSupplier;
+        awtSupplier =
+                new AwtSupplierImpl(mockRobot, mockClipboard, mockPointerInfo);
+        sut = new AwtTouchLink(awtSupplier);
     }
 
     /**
@@ -39,34 +48,31 @@ public class HeadFullAWTBackendTest {
      */
     @Test
     public void checkMoving() {
-        if (sut != null) {
-            final int top = 100;
-            final int left = 100;
-            final Point init =
-                    sut.move(new Point(0, 0), false, false, false).get();
+        sut.move(new Point(0, 0), false, false, false).get();
+        sut.move(new Point(0, 0), true, true, true).get();
+    }
 
-            final Point toLeftUp;
-            toLeftUp = sut.move(new Point(left, 0), false, false, false).get();
+    /**
+     * Check scrolling.
+     */
+    @Test
+    public void checkScroll() {
+        sut.scroll(0);
+    }
 
-            final int movedLeft = toLeftUp.x - init.x;
+    /**
+     * Check send clipboard.
+     */
+    @Test
+    public void checkSendClipboard() {
+        sut.sendClipboard("");
+    }
 
-            final Point back;
-            back = sut.move(new Point(0, -movedLeft), false, false, false)
-                    .get();
-
-            final Point toRight;
-            toRight = sut.move(new Point(-left, 0), false, false, false).get();
-
-            final int movedRight = toRight.x - back.x;
-
-            final Point back2;
-            back2 = sut.move(new Point(0, -movedRight), false, false, false)
-                    .get();
-
-            // final int movedRight;
-
-            assertNotEquals("Some movement should occur.", 0, movedLeft);
-            assertNotEquals("Some movement should occur.", 0, movedRight);
-        }
+    /**
+     * Check receive clipboard.
+     */
+    @Test
+    public void checkReceiveClipboard() {
+        sut.receiveClipboard();
     }
 }
