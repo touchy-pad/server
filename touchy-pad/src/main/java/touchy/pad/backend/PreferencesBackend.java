@@ -11,7 +11,7 @@ import touchy.pad.RuntimeConfigurationBackend;
 
 /**
  * Using Preferences API to implement a runtime configuration backend.
- * 
+ *
  * @author Jan Groothuijse
  */
 @Component
@@ -21,11 +21,11 @@ public final class PreferencesBackend implements RuntimeConfigurationBackend {
     /**
      * Repository of configuration.
      */
-    final private Preferences preferences;
+    private final Preferences preferences;
 
     /**
      * Constructor to be called by DI framework.
-     * 
+     *
      * @param name of the node.
      */
     PreferencesBackend(final @Value(
@@ -111,7 +111,7 @@ public final class PreferencesBackend implements RuntimeConfigurationBackend {
 
     /**
      * Removes a value.
-     * 
+     *
      * @param key of the configu directive to remove.
      */
     public void remove(final String key) {

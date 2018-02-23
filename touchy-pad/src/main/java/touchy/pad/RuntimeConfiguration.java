@@ -26,11 +26,11 @@ public @interface RuntimeConfiguration {
 
     /**
      * Utility class to inspect and reflect on configuration interfaces.
-     * 
+     *
      * Users of configuration, objects that depend on configuration do not need
      * to use this class, it exists to aid settings menu's, configuration
      * manipulation etc.
-     * 
+     *
      * @author Jan Groothuijse
      */
     interface Util {

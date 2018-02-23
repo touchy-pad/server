@@ -6,10 +6,15 @@ import org.junit.Test;
 
 /**
  * Tests configuration backend using java.util.preferences.
- * 
+ *
  * @author Jan Groothuijse
  */
-public class PreferencesBackendUnitTest {
+public final class PreferencesBackendUnitTest {
+
+    /**
+     * Margin for float and double comparisons.
+     */
+    private static final double MARGIN = 0.001;
 
     /**
      * System under test, used by all methods.
@@ -61,7 +66,7 @@ public class PreferencesBackendUnitTest {
         sut.remove(key);
         assertEquals(null, sut.getFloat(key));
         sut.setFloat(key, 0);
-        assertEquals(0.0f, (float) sut.getFloat(key), 0.01f);
+        assertEquals(0.0f, (float) sut.getFloat(key), MARGIN);
     }
 
     /**
@@ -73,7 +78,7 @@ public class PreferencesBackendUnitTest {
         sut.remove(key);
         assertEquals(null, sut.getDouble(key));
         sut.setDouble(key, 0);
-        assertEquals(0.0, (double) sut.getDouble(key), 0.001);
+        assertEquals(0.0, (double) sut.getDouble(key), MARGIN);
     }
 
     /**

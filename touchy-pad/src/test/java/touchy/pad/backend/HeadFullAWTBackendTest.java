@@ -1,6 +1,5 @@
 package touchy.pad.backend;
 
-import java.awt.AWTException;
 import java.awt.Point;
 import java.awt.PointerInfo;
 import java.awt.Robot;
@@ -16,10 +15,10 @@ import touchy.pad.backend.AwtTouchLink.AwtSupplierImpl;
 
 /**
  * Test that needs a dekstop to run.
- * 
+ *
  * @author Jan Groothuijse
  */
-public class HeadFullAWTBackendTest {
+public final class HeadFullAWTBackendTest {
 
     /**
      * System under test.
@@ -28,8 +27,6 @@ public class HeadFullAWTBackendTest {
 
     /**
      * Constructs a test.
-     * 
-     * @throws AWTException when the test is run headless.
      */
     public HeadFullAWTBackendTest() {
         final Robot mockRobot = Mockito.mock(Robot.class);

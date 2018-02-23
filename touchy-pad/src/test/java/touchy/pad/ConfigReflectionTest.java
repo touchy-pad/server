@@ -6,10 +6,10 @@ import org.junit.Test;
 
 /**
  * Unit test of the RuntimeConfiguration.Util class.
- * 
+ *
  * @author Jan Groothuijse
  */
-public class ConfigReflectionTest {
+public final class ConfigReflectionTest {
 
     /**
      * Checks the number of methods in SomeConfig.

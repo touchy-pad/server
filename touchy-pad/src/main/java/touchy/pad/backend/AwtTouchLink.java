@@ -128,7 +128,7 @@ public final class AwtTouchLink implements TouchLink {
 
     /**
      * Decouples AWT dependencies, so they can be mocked.
-     * 
+     *
      * @author Jan Groothuijse
      */
     interface AwtSupplier {
@@ -151,7 +151,7 @@ public final class AwtTouchLink implements TouchLink {
     /**
      * Default, production implementation. Needs to run on a non-headless
      * system.
-     * 
+     *
      * @author Jan Groothuijse
      */
     @Component

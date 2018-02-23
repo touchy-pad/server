@@ -10,7 +10,7 @@ import touchy.pad.TouchLink;
 
 /**
  * No-op implementation.
- * 
+ *
  * @author Jan Groothuijse
  */
 @Profile("noTouchLink")

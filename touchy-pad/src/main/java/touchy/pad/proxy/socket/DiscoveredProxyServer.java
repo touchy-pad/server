@@ -9,7 +9,7 @@ import touchy.pad.ProxyProvider;
 /**
  * Stores information required to: 1) Allow the user to choose the right server
  * 2) Connect to the server the user choose.
- * 
+ *
  * @author Jan Groothuijse
  */
 @RequiredArgsConstructor

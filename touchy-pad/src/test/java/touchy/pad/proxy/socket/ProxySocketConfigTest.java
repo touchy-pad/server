@@ -11,10 +11,10 @@ import touchy.pad.ProxyInitializationException;
 /**
  * Tests the configuration classes of the proxy socket package, it checks that
  * the defaults are 'sane'.
- * 
+ *
  * @author Jan Groothuijse
  */
-public class ProxySocketConfigTest {
+public final class ProxySocketConfigTest {
 
     /**
      * Default implementation.
@@ -49,7 +49,7 @@ public class ProxySocketConfigTest {
 
     /**
      * Checks that an exception gets thrown.
-     * 
+     *
      * @throws ProxyInitializationException always.
      */
     @Test(expected = ProxyInitializationException.class)

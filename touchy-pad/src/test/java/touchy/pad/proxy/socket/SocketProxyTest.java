@@ -156,7 +156,7 @@ public final class SocketProxyTest {
     /**
      * Test that the server is discoverable, and that the discovered servers can
      * be connected to.
-     * 
+     *
      * @throws Exception when something fails.
      */
     @Test

@@ -12,13 +12,13 @@ import touchy.pad.TouchLink;
 
 /**
  * Tests logging aspects.
- * 
+ *
  * @author Jan Groothuijse
  */
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = SpringConfig.class)
 @ActiveProfiles({ "noTouchLink", "allwaysNull" })
-public class LoggingAspectTest {
+public final class LoggingAspectTest {
 
     /**
      * Touch link.

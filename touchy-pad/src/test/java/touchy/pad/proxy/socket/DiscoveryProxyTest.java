@@ -4,7 +4,7 @@ import org.junit.Test;
 
 /**
  * Tests the discovery proxy.
- * 
+ *
  * @author Jan Groothuijse
  */
 public class DiscoveryProxyTest {
