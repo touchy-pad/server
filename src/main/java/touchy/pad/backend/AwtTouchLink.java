@@ -180,10 +180,8 @@ public final class AwtTouchLink implements TouchLink {
          * @throws HeadlessException when the system has no display.
          * @throws AWTException when awt is unhappy.
          */
-        public static AwtSupplierImpl headFull()
-                throws HeadlessException, AWTException {
-            return new AwtSupplierImpl(new Robot(),
-                    Toolkit.getDefaultToolkit().getSystemClipboard(),
+        public AwtSupplierImpl() throws HeadlessException, AWTException {
+            this(new Robot(), Toolkit.getDefaultToolkit().getSystemClipboard(),
                     MouseInfo.getPointerInfo());
         }
     }
