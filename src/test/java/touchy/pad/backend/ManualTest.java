@@ -15,7 +15,7 @@ interface ManualTest {
      */
     static void main(final String[] args) throws AWTException {
         final AwtTouchLink sut =
-                new AwtTouchLink(new AwtTouchLink.AwtSupplierImpl());
+                new AwtTouchLink(AwtTouchLink.AwtSupplierImpl.headFull());
         final int distance = 100;
         sut.move(new Point(distance, distance), false, false, false);
 

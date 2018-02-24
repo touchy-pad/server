@@ -1,6 +1,7 @@
 package touchy.pad.backend;
 
 import java.awt.AWTException;
+import java.awt.HeadlessException;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.PointerInfo;
@@ -17,6 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
 import org.apache.commons.io.IOUtils;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import lombok.AllArgsConstructor;
@@ -156,6 +158,7 @@ public final class AwtTouchLink implements TouchLink {
      */
     @Component
     @AllArgsConstructor
+    @Profile("!noTouchLink")
     @Getter
     public static class AwtSupplierImpl implements AwtSupplier {
 
@@ -171,14 +174,9 @@ public final class AwtTouchLink implements TouchLink {
          * To query the mouse position.
          */
         private final PointerInfo pointerInfo;
-
-        /**
-         * @throws AWTException when run on a non-headless system.
-         */
-        AwtSupplierImpl() throws AWTException {
-            robot = new Robot();
-            clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-            pointerInfo = MouseInfo.getPointerInfo();
+        
+        public static AwtSupplierImpl headFull() throws HeadlessException, AWTException {
+        	return new AwtSupplierImpl(new Robot(), Toolkit.getDefaultToolkit().getSystemClipboard(), MouseInfo.getPointerInfo());
         }
     }
 }

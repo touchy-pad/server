@@ -13,7 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  *
  */
 @RunWith(SpringRunner.class)
-@ActiveProfiles("allwaysNull")
+@ActiveProfiles({ "allwaysNull", "noTouchLink" })
 @SpringBootTest(classes = TouchyPadApplication.class)
 public class TouchyPadApplicationTests {
 
