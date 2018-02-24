@@ -174,9 +174,17 @@ public final class AwtTouchLink implements TouchLink {
          * To query the mouse position.
          */
         private final PointerInfo pointerInfo;
-        
-        public static AwtSupplierImpl headFull() throws HeadlessException, AWTException {
-        	return new AwtSupplierImpl(new Robot(), Toolkit.getDefaultToolkit().getSystemClipboard(), MouseInfo.getPointerInfo());
+
+        /**
+         * @return an awt supplier based, if ran on a system with a display.
+         * @throws HeadlessException when the system has no display.
+         * @throws AWTException when awt is unhappy.
+         */
+        public static AwtSupplierImpl headFull()
+                throws HeadlessException, AWTException {
+            return new AwtSupplierImpl(new Robot(),
+                    Toolkit.getDefaultToolkit().getSystemClipboard(),
+                    MouseInfo.getPointerInfo());
         }
     }
 }
