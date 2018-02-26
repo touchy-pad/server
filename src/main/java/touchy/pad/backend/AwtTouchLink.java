@@ -177,7 +177,7 @@ public final class AwtTouchLink implements TouchLink {
 
         /**
          * Construct an awt supplier based, if ran on a system with a display.
-         * 
+         *
          * @throws HeadlessException when the system has no display.
          * @throws AWTException when awt is unhappy.
          */
