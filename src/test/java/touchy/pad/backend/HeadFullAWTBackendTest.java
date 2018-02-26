@@ -34,6 +34,7 @@ public final class HeadFullAWTBackendTest {
         Mockito.when(mockClipboard.getContents(null))
                 .thenReturn(new StringSelection(""));
         final PointerInfo mockPointerInfo = Mockito.mock(PointerInfo.class);
+        Mockito.when(mockPointerInfo.getLocation()).thenReturn(new Point(0, 0));
         final AwtSupplier awtSupplier;
         awtSupplier =
                 new AwtSupplierImpl(mockRobot, mockClipboard, mockPointerInfo);

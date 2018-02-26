@@ -71,7 +71,6 @@ public final class AwtTouchLink implements TouchLink {
         handleMousePress(leftDown, left, InputEvent.BUTTON1_DOWN_MASK);
         handleMousePress(middleDown, middle, InputEvent.BUTTON2_DOWN_MASK);
         handleMousePress(rightDown, right, InputEvent.BUTTON3_DOWN_MASK);
-
         return () -> awtSupplier.getPointerInfo().getLocation();
     }
 
