@@ -65,7 +65,7 @@ public final class AwtTouchLink implements TouchLink {
             final boolean middle, final boolean right) {
         // move first, click release later
         final Point pre;
-        pre = MouseInfo.getPointerInfo().getLocation();
+        pre = awtSupplier.getPointerInfo().getLocation();
         awtSupplier.getRobot().mouseMove(delta.x + pre.x, delta.y + pre.y);
         // handle clicks
         handleMousePress(leftDown, left, InputEvent.BUTTON1_DOWN_MASK);
