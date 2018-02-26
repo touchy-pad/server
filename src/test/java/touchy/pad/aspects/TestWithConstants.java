@@ -25,7 +25,7 @@ import touchy.pad.backend.ConstantRuntimeConfigurationBackend;
  */
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = SpringConfig.class)
-@ActiveProfiles("constant")
+@ActiveProfiles({ "constant", "noTouchLink" })
 public final class TestWithConstants {
 
     // given a backend that never returns null and also returns some

@@ -20,7 +20,7 @@ import touchy.pad.SpringConfig;
  */
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = SpringConfig.class)
-@ActiveProfiles("allwaysNull")
+@ActiveProfiles({ "allwaysNull", "noTouchLink" })
 public final class TestWithPassTrough {
     // given a proxied instance,
     /**

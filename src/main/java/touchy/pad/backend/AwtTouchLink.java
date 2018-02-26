@@ -184,6 +184,7 @@ public final class AwtTouchLink implements TouchLink {
         public AwtSupplierImpl() throws HeadlessException, AWTException {
             this(new Robot(), Toolkit.getDefaultToolkit().getSystemClipboard(),
                     MouseInfo.getPointerInfo());
+            System.out.println("1222");
         }
     }
 }
