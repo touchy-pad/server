@@ -62,7 +62,7 @@ public final class SocketProxyClient
      * @author Jan Groothuijse
      */
     @RequiredArgsConstructor
-    private static final class SendReceive
+    static final class SendReceive
             implements AutoCloseable, Function<MethodProxy, Object> {
 
         /**

@@ -16,7 +16,7 @@ import touchy.pad.TouchLink;
  *
  * @author Jan Groothuijse
  */
-public interface MethodProxy extends Function<TouchLink, Object>, Serializable {
+interface MethodProxy extends Function<TouchLink, Object>, Serializable {
 
     /**
      * Proxy for a getClipboard method call.

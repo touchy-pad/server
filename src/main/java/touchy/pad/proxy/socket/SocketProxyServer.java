@@ -71,7 +71,7 @@ public final class SocketProxyServer
     /**
      * Makes this server discoverable through the udp socket.
      */
-    public void makeDiscoverable() {
+    void makeDiscoverable() {
         final int bufferSize = 15000;
         while (true) {
             final byte[] buffer = new byte[bufferSize];
@@ -81,7 +81,8 @@ public final class SocketProxyServer
                 System.out.println("Server: Waiting for packet");
                 datagramSocket.receive(packet);
                 final String message = new String(packet.getData()).trim();
-                final byte[] sendData = config.getServerName().getBytes();
+                final byte[] sendData =
+                        config.getServerName().getBytes("UTF-8");
                 if (message.equals(config.getDiscoveryRequest())) {
                     final DatagramPacket sendPacket;
                     sendPacket = new DatagramPacket(sendData, sendData.length,
@@ -120,7 +121,7 @@ public final class SocketProxyServer
     /**
      * @param socket the connection socket.
      */
-    private void handleConnection(final Socket socket) {
+    void handleConnection(final Socket socket) {
         log.info("handleConnection called");
         try (ObjectOutputStream output =
                 new ObjectOutputStream(socket.getOutputStream())) {
