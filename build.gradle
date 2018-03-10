@@ -26,6 +26,20 @@ repositories {
 	mavenCentral()
 }
 
+task codeCoverageReport(type: JacocoReport) {
+    executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
+
+    subprojects.each {
+        sourceSets it.sourceSets.main
+    }
+
+    reports {
+        xml.enabled true
+        xml.destination "${buildDir}/reports/jacoco/report.xml"
+        html.enabled false
+        csv.enabled false
+    }
+}
 
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-aop')
@@ -41,7 +55,5 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.mockito/mockito-core
 	testCompile group: 'org.mockito', name: 'mockito-core', version: '2.15.0'
 	// https://mvnrepository.com/artifact/org.mockito/mockito-inline
-	testCompile group: 'org.mockito', name: 'mockito-inline', version: '2.15.0'
-	
-	
+	testCompile group: 'org.mockito', name: 'mockito-inline', version: '2.15.0'	
 }
