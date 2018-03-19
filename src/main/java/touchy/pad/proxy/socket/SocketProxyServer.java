@@ -55,9 +55,9 @@ public final class SocketProxyServer
         backend = upstream;
         this.config = conf;
         // Listen on a port for connection.
-        log.info("Creating server socket on port: " + config.getPort());
+        log.error("Creating server socket on port: " + config.getPort());
         serverSocket = new ServerSocket(config.getPort());
-        log.info("Starting thread to accept connections.");
+        log.error("Starting thread to accept connections.");
         new Thread(this).start(); // calls run in a new thread.
 
         // Be discoverable through broadcast

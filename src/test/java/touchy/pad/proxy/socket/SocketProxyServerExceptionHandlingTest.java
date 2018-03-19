@@ -34,9 +34,12 @@ public final class SocketProxyServerExceptionHandlingTest {
      */
     // @Test
     public void handleConnectionGetInputThrows() throws IOException {
-        final SocketProxyServer sut =
-                new SocketProxyServer(new SocketProxyServerConfig() {
-                }, null);
+        final SocketProxyServerConfig config = new SocketProxyServerConfig() {
+
+        };
+
+        final SocketProxyServer sut;
+        sut = new SocketProxyServer(config, null);
 
         final OutputStream os = new ByteArrayOutputStream();
         final Socket socket = Mockito.mock(Socket.class);

@@ -13,6 +13,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import touchy.pad.ProxyInitializationException;
 import touchy.pad.ProxyProvider;
 import touchy.pad.TouchLink;
@@ -29,6 +30,7 @@ import touchy.pad.TouchLink.ServerProxy;
  */
 @RequiredArgsConstructor
 @Component("socketProxy")
+@Slf4j
 public final class SocketProxyProvider
         implements ProxyProvider<DiscoveredProxyServer> {
 
@@ -49,6 +51,8 @@ public final class SocketProxyProvider
         try {
             return new SocketProxyServer(serverConfig, backEnd);
         } catch (IOException e) {
+            log.error("IOException while starting server on port: "
+                    + serverConfig.getPort(), e);
             // Handle these errors in the interface, so that the user may
             // change config and/or retry.
             throw new ProxyInitializationException(e);
