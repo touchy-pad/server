@@ -57,7 +57,7 @@ public final class SocketProxyTest {
     /**
      * Port number.
      */
-    private static final int PORT = 19999;
+    private static final int PORT = 19998;
     /**
      * Contents of the clipboard.
      */
@@ -142,14 +142,14 @@ public final class SocketProxyTest {
             final Point point = new Point(0, 0);
             assertEquals(point, client.move(point, true, true, true).get());
         }
-
-        final SocketProxyServer server =
-                new SocketProxyServer(SERVER_CONFIG, fakeBackend);
-        final SocketProxyClient client =
-                new SocketProxyClient(CLIENT_CONFIG, discoveredProxy);
-
-        client.close();
-        server.close();
+        //
+        // final SocketProxyServer server =
+        // new SocketProxyServer(SERVER_CONFIG, fakeBackend);
+        // final SocketProxyClient client =
+        // new SocketProxyClient(CLIENT_CONFIG, discoveredProxy);
+        //
+        // client.close();
+        // server.close();
 
     }
 
