@@ -9,6 +9,9 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
@@ -44,6 +47,16 @@ public final class SocketProxyServer
      * Configuration relevant to the server.
      */
     private final SocketProxyServerConfig config;
+
+    /**
+     * Whether the server is still running.
+     */
+    private final AtomicBoolean running = new AtomicBoolean(true);
+
+    /**
+     * Thread to interrupt upon closing.
+     */
+    private final List<Thread> threads = new LinkedList<>();
 
     /**
      * @param conf the server, to obtain port number.
@@ -104,7 +117,7 @@ public final class SocketProxyServer
         try {
             log.info("Listening on socket server.");
             // Keep listening untill an exception occurs.
-            while (true) {
+            while (running.get()) {
                 // Blocking method, will stall the thread.
                 final Socket socket = serverSocket.accept();
                 log.info("Socket opened.");
@@ -134,7 +147,7 @@ public final class SocketProxyServer
                     new ObjectInputStream(socket.getInputStream());) {
                 // While the connection is open, we expect the client to send
                 // a method proxy and wait for the result to be returned.
-                while (!socket.isClosed() && !serverSocket.isClosed()) {
+                while (!socket.isClosed() && this.running.get()) {
                     log.info("Waiting for client input");
                     // Allow the client to send what needs to be done.
                     try {
@@ -144,7 +157,7 @@ public final class SocketProxyServer
                         final Object result = methodProxy.apply(backend);
                         output.writeObject(result);
                     } catch (EOFException e) {
-                        log.error("Connection was closed.");
+                        log.error("EOF, connection was closed.");
                         break;
                     }
                 }
@@ -166,5 +179,16 @@ public final class SocketProxyServer
 
         log.info("Closing discovery socket");
         datagramSocket.close();
+
+        running.set(false);
+        threads.forEach(Thread::interrupt);
+        threads.forEach(arg0 -> {
+            try {
+                arg0.join();
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        });
     }
 }
