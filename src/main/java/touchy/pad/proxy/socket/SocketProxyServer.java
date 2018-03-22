@@ -9,9 +9,12 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import org.apache.commons.lang3.tuple.Pair;
 
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
@@ -56,7 +59,7 @@ public final class SocketProxyServer
     /**
      * Thread to interrupt upon closing.
      */
-    private final List<Thread> threads = new LinkedList<>();
+    private final List<Pair<Thread, String>> threads = new LinkedList<>();
 
     /**
      * @param conf the server, to obtain port number.
@@ -71,14 +74,13 @@ public final class SocketProxyServer
         log.error("Creating server socket on port: " + config.getPort());
         serverSocket = new ServerSocket(config.getPort());
         log.error("Starting thread to accept connections.");
-        new Thread(this).start(); // calls run in a new thread.
-
+        addAndRun(new Thread(this), "listening on socket");
         // Be discoverable through broadcast
         final InetAddress address;
         address = InetAddress.getByName("0.0.0.0");
         datagramSocket = new DatagramSocket(config.getDiscoveryPort(), address);
         datagramSocket.setBroadcast(true);
-        new Thread(this::makeDiscoverable).start();
+        addAndRun(new Thread(this::makeDiscoverable), "disoverability");
     }
 
     /**
@@ -86,12 +88,14 @@ public final class SocketProxyServer
      */
     void makeDiscoverable() {
         final int bufferSize = 15000;
-        while (true) {
+        while (this.running.get()) {
             final byte[] buffer = new byte[bufferSize];
             final DatagramPacket packet;
             packet = new DatagramPacket(buffer, bufferSize);
             try {
                 System.out.println("Server: Waiting for packet");
+
+                datagramSocket.setSoTimeout(10);
                 datagramSocket.receive(packet);
                 final String message = new String(packet.getData()).trim();
                 final byte[] sendData =
@@ -104,6 +108,9 @@ public final class SocketProxyServer
                     System.out.println("Server: send to "
                             + sendPacket.getAddress().getHostAddress());
                 }
+            } catch (SocketTimeoutException e) {
+                System.out.println("continueing " + this.running.get());
+                continue;
             } catch (IOException e) {
                 // socket closed.
                 break;
@@ -114,21 +121,32 @@ public final class SocketProxyServer
     @Override
     public void run() {
         // TODO Auto-generated method stub
+        List<Socket> openedSockets = new LinkedList<>();
         try {
             log.info("Listening on socket server.");
             // Keep listening untill an exception occurs.
             while (running.get()) {
                 // Blocking method, will stall the thread.
                 final Socket socket = serverSocket.accept();
+                openedSockets.add(socket);
                 log.info("Socket opened.");
                 // Create a new thread, just for the connection with this
                 // client.
-                new Thread(() -> handleConnection(socket)).start();
+                addAndRun(new Thread(() -> handleConnection(socket)),
+                        "connectionHandler");
             }
         } catch (IOException e) {
             log.info("Somebody closed to socket, killing thread that listened "
                     + "on it.");
         }
+        openedSockets.forEach(t -> {
+            try {
+                t.close();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        });
     }
 
     /**
@@ -147,7 +165,8 @@ public final class SocketProxyServer
                     new ObjectInputStream(socket.getInputStream());) {
                 // While the connection is open, we expect the client to send
                 // a method proxy and wait for the result to be returned.
-                while (!socket.isClosed() && this.running.get()) {
+                while (!socket.isClosed() && this.running.get()
+                        && !this.serverSocket.isClosed()) {
                     log.info("Waiting for client input");
                     // Allow the client to send what needs to be done.
                     try {
@@ -181,14 +200,20 @@ public final class SocketProxyServer
         datagramSocket.close();
 
         running.set(false);
-        threads.forEach(Thread::interrupt);
-        threads.forEach(arg0 -> {
+        threads.forEach(pair -> {
+            log.info("Stopping {}", pair.getValue());
+            pair.getKey().interrupt();
             try {
-                arg0.join();
+                pair.getKey().join();
             } catch (InterruptedException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         });
+    }
+
+    private void addAndRun(final Thread thread, final String description) {
+        this.threads.add(Pair.of(thread, description));
+        thread.start();
     }
 }
