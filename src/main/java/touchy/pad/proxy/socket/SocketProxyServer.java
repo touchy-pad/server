@@ -94,8 +94,8 @@ public final class SocketProxyServer
             packet = new DatagramPacket(buffer, bufferSize);
             try {
                 System.out.println("Server: Waiting for packet");
-
-                datagramSocket.setSoTimeout(10);
+                final int timeout = 10;
+                datagramSocket.setSoTimeout(timeout);
                 datagramSocket.receive(packet);
                 final String message = new String(packet.getData()).trim();
                 final byte[] sendData =
@@ -212,6 +212,10 @@ public final class SocketProxyServer
         });
     }
 
+    /**
+     * @param thread the thread to interrupt and join.
+     * @param description textual description.
+     */
     private void addAndRun(final Thread thread, final String description) {
         this.threads.add(Pair.of(thread, description));
         thread.start();
