@@ -211,7 +211,7 @@ public final class SocketProxyServer
      * @param description textual description.
      */
     private void addAndRun(final Thread thread, final String description) {
-        // this.threads.add(Pair.of(thread, description));
+        this.threads.add(Pair.of(thread, description));
         thread.start();
     }
 }
