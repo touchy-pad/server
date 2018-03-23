@@ -1,6 +1,5 @@
 package touchy.pad.proxy.socket;
 
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -9,6 +8,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.LinkedList;
 import java.util.List;
@@ -94,8 +94,8 @@ public final class SocketProxyServer
             packet = new DatagramPacket(buffer, bufferSize);
             try {
                 System.out.println("Server: Waiting for packet");
-                final int timeout = 10;
-                datagramSocket.setSoTimeout(timeout);
+                // final int timeout = 10;
+                // datagramSocket.setSoTimeout(timeout);
                 datagramSocket.receive(packet);
                 final String message = new String(packet.getData()).trim();
                 final byte[] sendData =
@@ -112,7 +112,7 @@ public final class SocketProxyServer
                 System.out.println("continueing " + this.running.get());
                 continue;
             } catch (IOException e) {
-                // socket closed.
+                log.info("Datagram socket closed, killing discovery thread");
                 break;
             }
         }
@@ -165,24 +165,18 @@ public final class SocketProxyServer
                     new ObjectInputStream(socket.getInputStream());) {
                 // While the connection is open, we expect the client to send
                 // a method proxy and wait for the result to be returned.
-                while (!socket.isClosed() && this.running.get()
-                        && !this.serverSocket.isClosed()) {
+                while (this.running.get()) {
                     log.info("Waiting for client input");
                     // Allow the client to send what needs to be done.
-                    try {
-                        final MethodProxy methodProxy;
-                        methodProxy = (MethodProxy) input.readObject();
-                        // Return the result of
-                        final Object result = methodProxy.apply(backend);
-                        output.writeObject(result);
-                    } catch (EOFException e) {
-                        log.error("EOF, connection was closed.");
-                        break;
-                    }
+                    final MethodProxy methodProxy;
+                    methodProxy = (MethodProxy) input.readObject();
+                    // Return the result of
+                    final Object result = methodProxy.apply(backend);
+                    output.writeObject(result);
                 }
-                log.info("Socket is closed.");
             }
-
+        } catch (SocketException e) {
+            log.info("Socket is closed");
         } catch (IOException | ClassNotFoundException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();
@@ -217,7 +211,7 @@ public final class SocketProxyServer
      * @param description textual description.
      */
     private void addAndRun(final Thread thread, final String description) {
-        this.threads.add(Pair.of(thread, description));
+        // this.threads.add(Pair.of(thread, description));
         thread.start();
     }
 }

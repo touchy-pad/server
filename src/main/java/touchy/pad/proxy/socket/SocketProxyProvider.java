@@ -6,6 +6,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.Collections;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -130,6 +131,9 @@ public final class SocketProxyProvider
                         System.out.println(message + " from "
                                 + receivePacket.getAddress().getHostAddress());
                     }
+                } catch (SocketException e) {
+                    log.info(
+                            "DatagramSocket to broadcast for discovery closed");
                 } catch (IOException e) {
                     System.out.println("Exception thrown in discovery thread.");
                     e.printStackTrace();
