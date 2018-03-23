@@ -2,6 +2,7 @@ package touchy.pad.proxy.socket;
 
 import java.awt.Point;
 import java.io.Serializable;
+import java.util.Optional;
 import java.util.function.Function;
 
 import lombok.RequiredArgsConstructor;
@@ -113,7 +114,7 @@ interface MethodProxy extends Function<TouchLink, Object>, Serializable {
 
         @Override
         public Object apply(final TouchLink t) {
-            t.sendClipboard(text);
+            Optional.ofNullable(t).ifPresent(o -> o.sendClipboard(text));
             return null;
         }
     }

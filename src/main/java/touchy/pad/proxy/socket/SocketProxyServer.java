@@ -1,5 +1,6 @@
 package touchy.pad.proxy.socket;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -168,11 +169,16 @@ public final class SocketProxyServer
                 while (this.running.get()) {
                     log.info("Waiting for client input");
                     // Allow the client to send what needs to be done.
-                    final MethodProxy methodProxy;
-                    methodProxy = (MethodProxy) input.readObject();
-                    // Return the result of
-                    final Object result = methodProxy.apply(backend);
-                    output.writeObject(result);
+                    try {
+                        final MethodProxy methodProxy;
+                        methodProxy = (MethodProxy) input.readObject();
+                        // Return the result of
+                        final Object result = methodProxy.apply(backend);
+                        output.writeObject(result);
+                    } catch (EOFException e) {
+                        log.error("EOF, connection was closed.");
+                        break;
+                    }
                 }
             }
         } catch (SocketException e) {
@@ -196,7 +202,6 @@ public final class SocketProxyServer
         running.set(false);
         threads.forEach(pair -> {
             log.info("Stopping {}", pair.getValue());
-            pair.getKey().interrupt();
             try {
                 pair.getKey().join();
             } catch (InterruptedException e) {
