@@ -3,6 +3,7 @@ package touchy.pad.proxy.socket;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.InetAddress;
 import java.net.Socket;
 
 import org.mockito.Mockito;
@@ -20,7 +21,7 @@ public final class SocketProxyServerExceptionHandlingTest {
     public void handleConnectionGetOutputThrows() throws IOException {
         final SocketProxyServer sut =
                 new SocketProxyServer(new SocketProxyServerConfig() {
-                }, null);
+                }, null, InetAddress.getByName("0.0.0.0"));
 
         final Socket socket = Mockito.mock(Socket.class);
         Mockito.doThrow(IOException.class).when(socket).getOutputStream();
@@ -39,7 +40,8 @@ public final class SocketProxyServerExceptionHandlingTest {
         };
 
         final SocketProxyServer sut;
-        sut = new SocketProxyServer(config, null);
+        sut = new SocketProxyServer(config, null,
+                InetAddress.getByName("0.0.0.0"));
 
         final OutputStream os = new ByteArrayOutputStream();
         final Socket socket = Mockito.mock(Socket.class);

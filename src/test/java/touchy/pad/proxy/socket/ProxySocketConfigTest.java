@@ -3,6 +3,8 @@ package touchy.pad.proxy.socket;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.net.UnknownHostException;
+
 import org.junit.Test;
 import org.springframework.util.StringUtils;
 
@@ -51,10 +53,11 @@ public final class ProxySocketConfigTest {
      * Checks that an exception gets thrown.
      *
      * @throws ProxyInitializationException always.
+     * @throws UnknownHostException never.
      */
     @Test(expected = ProxyInitializationException.class)
     public void checkInsaneServerConfigLeadsToWrappedException()
-            throws ProxyInitializationException {
+            throws ProxyInitializationException, UnknownHostException {
         final SocketProxyServerConfig config = new SocketProxyServerConfig() {
             public int getPort() {
                 return 1;
@@ -62,7 +65,8 @@ public final class ProxySocketConfigTest {
         };
 
         final SocketProxyProvider provider;
-        provider = new SocketProxyProvider(config, null);
+        provider = new SocketProxyProvider(config, null, "0.0.0.0",
+                "255.255.255.255");
 
         provider.getAndStartServer(null);
     }

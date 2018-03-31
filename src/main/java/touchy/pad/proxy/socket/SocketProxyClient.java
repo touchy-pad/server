@@ -6,10 +6,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import touchy.pad.TouchLink;
 
@@ -26,7 +24,17 @@ public final class SocketProxyClient
     /**
      * Reference to close.
      */
-    private final SendReceive sendReceive;
+    private final Socket client;
+
+    /**
+     * Reference to close.
+     */
+    private final ObjectOutputStream output;
+
+    /**
+     * Reference to close.
+     */
+    private final ObjectInputStream input;
 
     /**
      * @param config to get port number and hostname.
@@ -35,107 +43,77 @@ public final class SocketProxyClient
      * @throws IOException when the connection fails.
      */
     public SocketProxyClient(final SocketProxyClientConfig config,
-            final DiscoveredProxyServer connectTo)
-            throws UnknownHostException, IOException {
-        log.info("Creating client connection.");
+            final DiscoveredProxyServer connectTo) throws IOException {
 
-        final Socket client =
-                new Socket(connectTo.getAddress(), config.getPort());
-        final ObjectOutputStream output;
+        log.info("Creating client connection.");
+        client = new Socket(connectTo.getAddress(), config.getPort());
         output = new ObjectOutputStream(client.getOutputStream());
         log.info("Created client output.");
         // Flush to unfreeze the ObjectInputStream on the other side, see new
         // ObjectInputStream().
         output.flush();
         log.info("Flushed.");
-        final ObjectInputStream input;
         input = new ObjectInputStream(client.getInputStream());
-        log.info("creating sendReceive.");
-
-        sendReceive = new SendReceive(client, output, input);
-        log.info("created sendReceive.");
     }
 
     /**
-     * Template pattern applied for sending and receiving while holding a lock.
-     *
-     * @author Jan Groothuijse
+     * Send and receive to the other side.
+     * 
+     * @param proxy the method proxy.
+     * @return what the message proxy returned when it executed on the other
+     *         side.
      */
-    @RequiredArgsConstructor
-    static final class SendReceive
-            implements AutoCloseable, Function<MethodProxy, Object> {
-
-        /**
-         * Reference to close.
-         */
-        private final Socket client;
-
-        /**
-         * Reference to close.
-         */
-        private final ObjectOutputStream output;
-
-        /**
-         * Reference to close.
-         */
-        private final ObjectInputStream input;
-
-        @Override
-        public Object apply(final MethodProxy proxy) {
-            synchronized (this) {
-                try {
-                    try {
-                        output.writeObject(proxy);
-                    } catch (IOException e) {
-                        log.error("Network error while writing", e);
-                    }
-                    return input.readObject();
-                } catch (IOException e) {
-                    log.error("Network error while reading", e);
-                } catch (ClassNotFoundException e) {
-                    log.error("Unknown class while reading response from "
-                            + "server", e);
-                }
-                return null;
+    private Object sendAndReceive(final MethodProxy proxy) {
+        synchronized (this) {
+            try {
+                output.writeObject(proxy);
+            } catch (IOException e) {
+                log.error("Network error while writing, proceeding to read", e);
             }
+            try {
+                return input.readObject();
+            } catch (IOException e) {
+                log.error("Network error while reading", e);
+            } catch (ClassNotFoundException e) {
+                log.error(
+                        "Unknown class while reading response from " + "server",
+                        e);
+            }
+            return null;
         }
+    }
 
-        @Override
-        public void close() throws Exception {
-            output.close();
-            input.close();
-            client.close();
-        }
-
+    @Override
+    public void close() throws Exception {
+        output.close();
+        input.close();
+        client.close();
     }
 
     @Override
     public Supplier<Point> move(final Point delta, final boolean left,
             final boolean middle, final boolean right) {
-        final Point point = (Point) sendReceive
-                .apply(new MethodProxy.Move(delta, right, right, right));
+
+        final MethodProxy.Move move;
+        move = new MethodProxy.Move(delta, right, right, right);
+        final Point point = (Point) sendAndReceive(move);
         return () -> point;
     }
 
     @Override
     public void scroll(final int amount) {
-        sendReceive.apply(new MethodProxy.Scroll(amount));
+        sendAndReceive(new MethodProxy.Scroll(amount));
     }
 
     @Override
     public void sendClipboard(final String text) {
-        sendReceive.apply(new MethodProxy.TypeText(text));
+        sendAndReceive(new MethodProxy.TypeText(text));
     }
 
     @Override
     public Supplier<String> receiveClipboard() {
-        final String string =
-                (String) sendReceive.apply(new MethodProxy.GetClipboard());
+        final String string;
+        string = (String) sendAndReceive(new MethodProxy.GetClipboard());
         return () -> string;
-    }
-
-    @Override
-    public void close() throws Exception {
-        sendReceive.close();
     }
 }

@@ -21,6 +21,6 @@ public interface SocketProxyClientConfig {
      */
     @RuntimeConfiguration
     default int getPort() {
-        return SocketProxyServerConfig.DEFAULT_PORT;
+        return SocketProxyServer.DEFAULT_PORT;
     }
 }

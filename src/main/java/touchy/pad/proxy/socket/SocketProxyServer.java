@@ -10,7 +10,6 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
-import java.net.SocketTimeoutException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -63,12 +62,23 @@ public final class SocketProxyServer
     private final List<Pair<Thread, String>> threads = new LinkedList<>();
 
     /**
+     * Name of the server.
+     */
+    public static final String SERVER_NAME = "Touchy pad server";
+
+    /**
+     * Default port number to listen on.
+     */
+    public static final int DEFAULT_PORT = 9898;
+
+    /**
      * @param conf the server, to obtain port number.
      * @param upstream the backend that actually moves things.
      * @throws IOException when the connection fails.
      */
     SocketProxyServer(final SocketProxyServerConfig conf,
-            final TouchLink.Backend upstream) throws IOException {
+            final TouchLink.Backend upstream, final InetAddress address)
+            throws IOException {
         backend = upstream;
         this.config = conf;
         // Listen on a port for connection.
@@ -77,8 +87,7 @@ public final class SocketProxyServer
         log.error("Starting thread to accept connections.");
         addAndRun(new Thread(this), "listening on socket");
         // Be discoverable through broadcast
-        final InetAddress address;
-        address = InetAddress.getByName("0.0.0.0");
+
         datagramSocket = new DatagramSocket(config.getDiscoveryPort(), address);
         datagramSocket.setBroadcast(true);
         addAndRun(new Thread(this::makeDiscoverable), "disoverability");
@@ -94,9 +103,7 @@ public final class SocketProxyServer
             final DatagramPacket packet;
             packet = new DatagramPacket(buffer, bufferSize);
             try {
-                System.out.println("Server: Waiting for packet");
-                // final int timeout = 10;
-                // datagramSocket.setSoTimeout(timeout);
+                log.info("Discovery: Waiting for packet");
                 datagramSocket.receive(packet);
                 final String message = new String(packet.getData()).trim();
                 final byte[] sendData =
@@ -106,12 +113,9 @@ public final class SocketProxyServer
                     sendPacket = new DatagramPacket(sendData, sendData.length,
                             packet.getAddress(), packet.getPort());
                     datagramSocket.send(sendPacket);
-                    System.out.println("Server: send to "
+                    log.info("Discovery: send to "
                             + sendPacket.getAddress().getHostAddress());
                 }
-            } catch (SocketTimeoutException e) {
-                System.out.println("continueing " + this.running.get());
-                continue;
             } catch (IOException e) {
                 log.info("Datagram socket closed, killing discovery thread");
                 break;
@@ -121,7 +125,6 @@ public final class SocketProxyServer
 
     @Override
     public void run() {
-        // TODO Auto-generated method stub
         List<Socket> openedSockets = new LinkedList<>();
         try {
             log.info("Listening on socket server.");
@@ -144,8 +147,7 @@ public final class SocketProxyServer
             try {
                 t.close();
             } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                log.error("Error while closing opened sockets", e);
             }
         });
     }
@@ -169,7 +171,7 @@ public final class SocketProxyServer
                 while (this.running.get()) {
                     log.info("Waiting for client input");
                     // Allow the client to send what needs to be done.
-                    try {
+                    try { // NOSONAR
                         final MethodProxy methodProxy;
                         methodProxy = (MethodProxy) input.readObject();
                         // Return the result of
@@ -184,8 +186,7 @@ public final class SocketProxyServer
         } catch (SocketException e) {
             log.info("Socket is closed");
         } catch (IOException | ClassNotFoundException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+            log.error("Error communicating with client", e1);
         }
     }
 
@@ -205,8 +206,7 @@ public final class SocketProxyServer
             try {
                 pair.getKey().join();
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                Thread.currentThread().interrupt();
             }
         });
     }

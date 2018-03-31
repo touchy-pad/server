@@ -25,6 +25,14 @@ class DiscoveredProxyServer implements ProxyProvider.DiscoveredServer {
      * information.
      */
     private final InetAddress address;
+    /**
+     * Default payload for discovery.
+     */
+    public static final String DISCOVERY_REQUEST = "DISCOVERY_REQUEST";
+    /**
+     * Default port number for discovery queries.
+     */
+    public static final int DISCOVERY_PORT = 8989;
 
     @Override
     public String getName() {

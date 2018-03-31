@@ -24,7 +24,7 @@ public final class DiscoveryProxyTest {
         final SocketProxyProvider provider;
         provider = new SocketProxyProvider(new SocketProxyServerConfig() {
         }, new SocketProxyClientConfig() {
-        });
+        }, "0.0.0.0", "255.255.255.255");
         System.out.println("Starting server using fake backend");
         final ServerProxy server = provider.getAndStartServer(null);
         System.out.println("Getting queue");

@@ -7,13 +7,14 @@ import java.net.InetAddress;
 import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import touchy.pad.ProxyInitializationException;
 import touchy.pad.ProxyProvider;
@@ -29,7 +30,6 @@ import touchy.pad.TouchLink.ServerProxy;
  *
  * @author Jan Groothuijse
  */
-@RequiredArgsConstructor
 @Component("socketProxy")
 @Slf4j
 public final class SocketProxyProvider
@@ -44,13 +44,39 @@ public final class SocketProxyProvider
      * Client config.
      */
     private final SocketProxyClientConfig clientConfig;
+    /**
+     * Address to refer to all addresses.
+     */
+    private final InetAddress address;
+    /**
+     * Broadcast address.
+     */
+    private final InetAddress broadcastAddress;
+
+    /**
+     * @param serverCfg the runtime server config
+     * @param clientCfg the runtime client config
+     * @param anyIp ip address of any host as a string (0.0.0.0 or ::).
+     * @throws UnknownHostException
+     */
+    SocketProxyProvider(SocketProxyServerConfig serverCfg,
+            final SocketProxyClientConfig clientCfg,
+            final @Value("${touchy.anyIp}") String anyIp,
+            final @Value("${touchy.broadcastIp}") String broadcastIp)
+            throws UnknownHostException {
+        address = InetAddress.getByName(anyIp);
+        broadcastAddress = InetAddress.getByName(broadcastIp);
+        serverConfig = serverCfg;
+        clientConfig = clientCfg;
+
+    }
 
     @Override
     public ServerProxy getAndStartServer(final TouchLink.Backend backEnd)
             throws ProxyInitializationException {
 
         try {
-            return new SocketProxyServer(serverConfig, backEnd);
+            return new SocketProxyServer(serverConfig, backEnd, address);
         } catch (IOException e) {
             log.error("IOException while starting server on port: "
                     + serverConfig.getPort(), e);
@@ -76,36 +102,39 @@ public final class SocketProxyProvider
     public CloseableQueueProvider<DiscoveredProxyServer> discoverServers() {
         final BlockingQueue<DiscoveredProxyServer> list;
         list = new LinkedBlockingQueue<>();
+        // Refactor to start a new thread to fill the queue, it owns the
+        // socket and closes it. The sockets lifetime is tied to the threads
+        // lifetime.
+
         try {
-            final DatagramSocket datagramSocket;
-            datagramSocket = new DatagramSocket();
+            final DatagramSocket datagramSocket = new DatagramSocket();
             datagramSocket.setBroadcast(true);
             final byte[] sendData =
                     serverConfig.getDiscoveryRequest().getBytes();
 
-            // Send dstuff
+            // Send stuff
             final DatagramPacket sendPacket;
             // Try default 255.255.255.255 broadcast address.
             sendPacket = new DatagramPacket(sendData, sendData.length,
-                    InetAddress.getByName("255.255.255.255"),
-                    serverConfig.getDiscoveryPort());
-            System.out.println("Client: Sending to 255.255.255.255.");
+                    broadcastAddress, serverConfig.getDiscoveryPort());
+            log.info("Sending to {}.", broadcastAddress.getHostAddress());
             datagramSocket.send(sendPacket);
 
             // Get broadcast addresses of all interfaces.
             for (NetworkInterface networkInterface : Collections
                     .list(NetworkInterface.getNetworkInterfaces())) {
                 if (!networkInterface.isLoopback()) {
-                    for (InterfaceAddress address : networkInterface
+                    for (InterfaceAddress hostAddress : networkInterface
                             .getInterfaceAddresses()) {
-                        final InetAddress broadcast = address.getBroadcast();
+                        final InetAddress broadcast =
+                                hostAddress.getBroadcast();
                         if (broadcast != null) {
                             final DatagramPacket sendAnother;
                             sendAnother = new DatagramPacket(sendData,
                                     sendData.length, broadcast,
                                     serverConfig.getDiscoveryPort());
-                            System.out.println("Client: Sending to "
-                                    + broadcast.getHostAddress());
+                            log.info(
+                                    "Sending to " + broadcast.getHostAddress());
                             datagramSocket.send(sendAnother);
                         }
                     }
@@ -123,21 +152,19 @@ public final class SocketProxyProvider
                     while (true) {
                         datagramSocket.receive(receivePacket);
 
-                        final String message =
-                                new String(receivePacket.getData()).trim();
+                        final String message;
+                        message = new String(receivePacket.getData()).trim();
                         datagramSocket.close();
                         list.add(new DiscoveredProxyServer(message,
                                 receivePacket.getAddress()));
-                        System.out.println(message + " from "
+                        log.info(message + " from "
                                 + receivePacket.getAddress().getHostAddress());
                     }
                 } catch (SocketException e) {
                     log.info(
                             "DatagramSocket to broadcast for discovery closed");
                 } catch (IOException e) {
-                    System.out.println("Exception thrown in discovery thread.");
-                    e.printStackTrace();
-
+                    log.info("Exception thrown in discovery thread.", e);
                 }
             });
             thread.start();
@@ -154,6 +181,7 @@ public final class SocketProxyProvider
                 }
             };
         } catch (Exception e) {
+
             return new CloseableQueueProvider<DiscoveredProxyServer>() {
 
                 @Override
