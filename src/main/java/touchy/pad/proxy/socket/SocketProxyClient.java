@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.function.Supplier;
 
 import lombok.extern.slf4j.Slf4j;
@@ -58,7 +57,7 @@ public final class SocketProxyClient
 
     /**
      * Send and receive to the other side.
-     * 
+     *
      * @param proxy the method proxy.
      * @return what the message proxy returned when it executed on the other
      *         side.

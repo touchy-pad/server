@@ -57,9 +57,11 @@ public final class SocketProxyProvider
      * @param serverCfg the runtime server config
      * @param clientCfg the runtime client config
      * @param anyIp ip address of any host as a string (0.0.0.0 or ::).
-     * @throws UnknownHostException
+     * @param broadcastIp the ip to broadcast (255.255.255.255 on ipv4).
+     * @throws UnknownHostException the host is not known.
      */
-    SocketProxyProvider(SocketProxyServerConfig serverCfg,
+    SocketProxyProvider( //
+            final SocketProxyServerConfig serverCfg,
             final SocketProxyClientConfig clientCfg,
             final @Value("${touchy.anyIp}") String anyIp,
             final @Value("${touchy.broadcastIp}") String broadcastIp)

@@ -74,6 +74,7 @@ public final class SocketProxyServer
     /**
      * @param conf the server, to obtain port number.
      * @param upstream the backend that actually moves things.
+     * @param address the address to bind to.
      * @throws IOException when the connection fails.
      */
     SocketProxyServer(final SocketProxyServerConfig conf,
@@ -125,7 +126,7 @@ public final class SocketProxyServer
 
     @Override
     public void run() {
-        List<Socket> openedSockets = new LinkedList<>();
+        final List<Socket> openedSockets = new LinkedList<>();
         try {
             log.info("Listening on socket server.");
             // Keep listening untill an exception occurs.
