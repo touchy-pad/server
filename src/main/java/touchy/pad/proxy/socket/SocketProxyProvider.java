@@ -60,7 +60,7 @@ public final class SocketProxyProvider
      * @param broadcastIp the ip to broadcast (255.255.255.255 on ipv4).
      * @throws UnknownHostException the host is not known.
      */
-    SocketProxyProvider( //
+    SocketProxyProvider(//
             final SocketProxyServerConfig serverCfg,
             final SocketProxyClientConfig clientCfg,
             final @Value("${touchy.anyIp}") String anyIp,

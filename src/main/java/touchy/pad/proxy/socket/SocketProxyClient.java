@@ -38,7 +38,6 @@ public final class SocketProxyClient
     /**
      * @param config to get port number and hostname.
      * @param connectTo connect to a server.
-     * @throws UnknownHostException when no connection can be made.
      * @throws IOException when the connection fails.
      */
     public SocketProxyClient(final SocketProxyClientConfig config,
