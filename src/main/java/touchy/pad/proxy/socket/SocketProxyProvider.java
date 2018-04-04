@@ -100,20 +100,82 @@ public final class SocketProxyProvider
         }
     }
 
-    @Override
-    public CloseableQueueProvider<DiscoveredProxyServer> discoverServers() {
-        final BlockingQueue<DiscoveredProxyServer> list;
-        list = new LinkedBlockingQueue<>();
-        // Refactor to start a new thread to fill the queue, it owns the
-        // socket and closes it. The sockets lifetime is tied to the threads
-        // lifetime.
+    /**
+     * Combines a list and socket, ties the lifetime of the socket to the
+     * lifetime of the list provider.
+     */
+    private class RunnableClosableQueueProvider
+            implements CloseableQueueProvider<DiscoveredProxyServer>, Runnable {
+        /**
+         * Socket to send and receive data.
+         */
+        private final DatagramSocket datagramSocket;
+        /**
+         * List of discovered servers.
+         */
+        private final BlockingQueue<DiscoveredProxyServer> list;
 
-        try {
-            final DatagramSocket datagramSocket = new DatagramSocket();
-            datagramSocket.setBroadcast(true);
-            final byte[] sendData =
-                    serverConfig.getDiscoveryRequest().getBytes();
+        /**
+         * @throws SocketException when no new datagram socket can be made.
+         */
+        RunnableClosableQueueProvider() throws SocketException {
+            list = new LinkedBlockingQueue<>();
+            datagramSocket = new DatagramSocket();
+        }
 
+        @Override
+        public BlockingQueue<DiscoveredProxyServer> get() {
+            return list;
+        }
+
+        @Override
+        public void close() throws IOException {
+            datagramSocket.close();
+
+        }
+
+        @Override
+        public void run() {
+            try {
+                datagramSocket.setBroadcast(true);
+                final byte[] sendData;
+                sendData = serverConfig.getDiscoveryRequest().getBytes();
+
+                // Get broadcast addresses of all interfaces.
+                sendBroadcast(sendData);
+
+                // Receive stuff
+                final int bufferSize = 15000;
+                final byte[] buffer = new byte[bufferSize];
+                final DatagramPacket receivePacket;
+                receivePacket = new DatagramPacket(buffer, buffer.length);
+
+                // Quit at the first sign of trouble.
+                while (!datagramSocket.isClosed()) {
+                    datagramSocket.receive(receivePacket);
+
+                    final String message;
+                    message = new String(receivePacket.getData()).trim();
+                    datagramSocket.close();
+                    list.add(new DiscoveredProxyServer(message,
+                            receivePacket.getAddress()));
+                    log.info(message + " from "
+                            + receivePacket.getAddress().getHostAddress());
+                }
+            } catch (SocketException e) {
+                log.info("DatagramSocket to broadcast for discovery closed");
+            } catch (IOException e) {
+                log.info("Exception thrown in discovery thread.", e);
+            }
+        }
+
+        /**
+         * Sends sendData to the entire network.
+         *
+         * @param sendData the data to broadcast.
+         * @throws IOException when the network fails.
+         */
+        private void sendBroadcast(final byte[] sendData) throws IOException {
             // Send stuff
             final DatagramPacket sendPacket;
             // Try default 255.255.255.255 broadcast address.
@@ -122,7 +184,6 @@ public final class SocketProxyProvider
             log.info("Sending to {}.", broadcastAddress.getHostAddress());
             datagramSocket.send(sendPacket);
 
-            // Get broadcast addresses of all interfaces.
             for (NetworkInterface networkInterface : Collections
                     .list(NetworkInterface.getNetworkInterfaces())) {
                 if (!networkInterface.isLoopback()) {
@@ -142,60 +203,18 @@ public final class SocketProxyProvider
                     }
                 }
             }
+        }
+    }
 
-            // Receive stuff
-            final int bufferSize = 15000;
-            final byte[] buffer = new byte[bufferSize];
-            final DatagramPacket receivePacket;
-            receivePacket = new DatagramPacket(buffer, buffer.length);
-            Thread thread = new Thread(() -> {
-                try {
-                    // Quit at the first sign of trouble.
-                    while (true) {
-                        datagramSocket.receive(receivePacket);
-
-                        final String message;
-                        message = new String(receivePacket.getData()).trim();
-                        datagramSocket.close();
-                        list.add(new DiscoveredProxyServer(message,
-                                receivePacket.getAddress()));
-                        log.info(message + " from "
-                                + receivePacket.getAddress().getHostAddress());
-                    }
-                } catch (SocketException e) {
-                    log.info(
-                            "DatagramSocket to broadcast for discovery closed");
-                } catch (IOException e) {
-                    log.info("Exception thrown in discovery thread.", e);
-                }
-            });
-            thread.start();
-            return new CloseableQueueProvider<DiscoveredProxyServer>() {
-
-                @Override
-                public BlockingQueue<DiscoveredProxyServer> get() {
-                    return list;
-                }
-
-                @Override
-                public void close() {
-                    datagramSocket.close();
-                }
-            };
-        } catch (Exception e) {
-
-            return new CloseableQueueProvider<DiscoveredProxyServer>() {
-
-                @Override
-                public BlockingQueue<DiscoveredProxyServer> get() {
-                    return null;
-                }
-
-                @Override
-                public void close() throws IOException {
-
-                }
-            };
+    @Override
+    public CloseableQueueProvider<DiscoveredProxyServer> discoverServers() {
+        try {
+            final RunnableClosableQueueProvider result;
+            result = new RunnableClosableQueueProvider();
+            new Thread(result).start();
+            return result;
+        } catch (SocketException e) {
+            return null;
         }
     }
 }
