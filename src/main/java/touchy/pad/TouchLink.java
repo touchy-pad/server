@@ -62,7 +62,7 @@ public interface TouchLink {
      * @author Jan Groothuijse
      *
      */
-    interface ServerProxy extends TouchLink, AutoCloseable {
+    interface ServerProxy extends AutoCloseable {
 
     }
 

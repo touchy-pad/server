@@ -66,7 +66,7 @@ public final class ProxySocketConfigTest {
 
         final SocketProxyProvider provider;
         provider = new SocketProxyProvider(config, null, "0.0.0.0",
-                "255.255.255.255");
+                "255.255.255.255", new SocketUtilsImpl());
 
         provider.getAndStartServer(null);
     }

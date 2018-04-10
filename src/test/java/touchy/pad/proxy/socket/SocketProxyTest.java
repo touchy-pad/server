@@ -120,8 +120,9 @@ public final class SocketProxyTest {
         final DiscoveredProxyServer discoveredProxy;
         discoveredProxy =
                 new DiscoveredProxyServer("", InetAddress.getLocalHost());
-        final SocketProxyProvider provider = new SocketProxyProvider(
-                SERVER_CONFIG, CLIENT_CONFIG, "0.0.0.0", "255.255.255.0");
+        final SocketProxyProvider provider =
+                new SocketProxyProvider(SERVER_CONFIG, CLIENT_CONFIG, "0.0.0.0",
+                        "255.255.255.0", new SocketUtilsImpl());
         try (ServerProxy server = provider.getAndStartServer(fakeBackend);
                 ClientProxy client = provider.getClient(discoveredProxy)) {
 
@@ -144,9 +145,10 @@ public final class SocketProxyTest {
         }
 
         final SocketProxyServer server = new SocketProxyServer(SERVER_CONFIG,
-                fakeBackend, InetAddress.getByName("0.0.0.0"));
-        final SocketProxyClient client =
-                new SocketProxyClient(CLIENT_CONFIG, discoveredProxy);
+                fakeBackend, InetAddress.getByName("0.0.0.0"),
+                new SocketUtilsImpl());
+        final SocketProxyClient client = new SocketProxyClient(CLIENT_CONFIG,
+                discoveredProxy, new SocketUtilsImpl());
 
         client.close();
         server.close();
@@ -163,7 +165,7 @@ public final class SocketProxyTest {
     public void discovery() throws Exception {
         final SocketProxyProvider provider;
         provider = new SocketProxyProvider(SERVER_CONFIG, CLIENT_CONFIG,
-                "0.0.0.0", "255.255.255.0");
+                "0.0.0.0", "255.255.255.0", new SocketUtilsImpl());
         System.out.println("Starting server using fake backend");
         final ServerProxy server = provider.getAndStartServer(fakeBackend);
         System.out.println("Getting queue");

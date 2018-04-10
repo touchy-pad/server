@@ -38,20 +38,22 @@ public final class SocketProxyClient
     /**
      * @param config to get port number and hostname.
      * @param connectTo connect to a server.
+     * @param socketUtils to get socket and object io streams.
      * @throws IOException when the connection fails.
      */
     public SocketProxyClient(final SocketProxyClientConfig config,
-            final DiscoveredProxyServer connectTo) throws IOException {
+            final DiscoveredProxyServer connectTo,
+            final SocketUtils socketUtils) throws IOException {
 
         log.info("Creating client connection.");
-        client = new Socket(connectTo.getAddress(), config.getPort());
-        output = new ObjectOutputStream(client.getOutputStream());
+        client = socketUtils.socket(config.getPort(), connectTo.getAddress());
+        output = socketUtils.objectOutputStream(client.getOutputStream());
         log.info("Created client output.");
         // Flush to unfreeze the ObjectInputStream on the other side, see new
         // ObjectInputStream().
         output.flush();
         log.info("Flushed.");
-        input = new ObjectInputStream(client.getInputStream());
+        input = socketUtils.objectInputStream(client.getInputStream());
     }
 
     /**
@@ -61,29 +63,30 @@ public final class SocketProxyClient
      * @return what the message proxy returned when it executed on the other
      *         side.
      */
-    private Object sendAndReceive(final MethodProxy proxy) {
-        synchronized (this) {
-            try {
-                output.writeObject(proxy);
-            } catch (IOException e) {
-                log.error("Network error while writing, proceeding to read", e);
-            }
-            try {
-                return input.readObject();
-            } catch (IOException e) {
-                log.error("Network error while reading", e);
-            } catch (ClassNotFoundException e) {
-                log.error(
-                        "Unknown class while reading response from " + "server",
-                        e);
-            }
-            return null;
+    private synchronized Object sendAndReceive(final MethodProxy proxy) {
+        try {
+            output.writeObject(proxy);
+        } catch (IOException e) {
+            log.error("Network error while writing, proceeding to read", e);
         }
+        try {
+            return input.readObject();
+        } catch (IOException e) {
+            log.error("Network error while reading", e);
+        } catch (ClassNotFoundException e) {
+            log.error("Unknown class while reading response from " + "server",
+                    e);
+        }
+        return null;
     }
 
     @Override
     public void close() throws Exception {
-        output.close();
+        try {
+            output.close();
+        } catch (IOException e) {
+            // Do nothing, nothing can be done.
+        }
         input.close();
         client.close();
     }

@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 
+import org.junit.Test;
 import org.mockito.Mockito;
 
 /**
@@ -16,12 +17,15 @@ import org.mockito.Mockito;
 public final class SocketProxyServerExceptionHandlingTest {
     /**
      * @throws IOException when network fails.
+     * @throws InterruptedException when the join call is interrupted.
      */
-    // @Test
-    public void handleConnectionGetOutputThrows() throws IOException {
+    @Test
+    public void handleConnectionGetOutputThrows()
+            throws IOException, InterruptedException {
         final SocketProxyServer sut =
                 new SocketProxyServer(new SocketProxyServerConfig() {
-                }, null, InetAddress.getByName("0.0.0.0"));
+                }, null, InetAddress.getByName("0.0.0.0"),
+                        new SocketUtilsImpl());
 
         final Socket socket = Mockito.mock(Socket.class);
         Mockito.doThrow(IOException.class).when(socket).getOutputStream();
@@ -32,16 +36,18 @@ public final class SocketProxyServerExceptionHandlingTest {
 
     /**
      * @throws IOException when network fails.
+     * @throws InterruptedException when the join call is interrupted.
      */
-    // @Test
-    public void handleConnectionGetInputThrows() throws IOException {
+    @Test
+    public void handleConnectionGetInputThrows()
+            throws IOException, InterruptedException {
         final SocketProxyServerConfig config = new SocketProxyServerConfig() {
 
         };
 
         final SocketProxyServer sut;
         sut = new SocketProxyServer(config, null,
-                InetAddress.getByName("0.0.0.0"));
+                InetAddress.getByName("0.0.0.0"), new SocketUtilsImpl());
 
         final OutputStream os = new ByteArrayOutputStream();
         final Socket socket = Mockito.mock(Socket.class);

@@ -1,8 +1,5 @@
 package touchy.pad.proxy.socket;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-
 import touchy.pad.RuntimeConfiguration;
 
 /**
@@ -37,15 +34,10 @@ public interface SocketProxyServerConfig {
     }
 
     /**
-     * @return the port used for discovery using broadcast.
+     * @return the name of the server.
      */
     @RuntimeConfiguration
     default String getServerName() {
-
-        try {
-            return InetAddress.getLocalHost().getHostName();
-        } catch (UnknownHostException e) {
-            return SocketProxyServer.SERVER_NAME;
-        }
+        return SocketProxyServer.SERVER_NAME;
     }
 }

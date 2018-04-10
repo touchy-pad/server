@@ -15,27 +15,27 @@ import touchy.pad.TouchLink;
  */
 @Profile("noTouchLink")
 @Component
-public final class NoTouchLink implements TouchLink {
+public final class NoTouchLink implements TouchLink.Backend {
 
     @Override
     public Supplier<Point> move(final Point delta, final boolean left,
             final boolean middle, final boolean right) {
-        return null;
+        return () -> delta;
     }
 
     @Override
     public void scroll(final int amount) {
-
+        // No op implementation.
     }
 
     @Override
     public void sendClipboard(final String text) {
-
+        // No op implementation.
     }
 
     @Override
     public Supplier<String> receiveClipboard() {
-        return null;
+        return () -> "";
     }
 
 }

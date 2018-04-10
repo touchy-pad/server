@@ -13,7 +13,6 @@ import touchy.pad.ProxyProvider;
  * @author Jan Groothuijse
  */
 @RequiredArgsConstructor
-@Getter
 class DiscoveredProxyServer implements ProxyProvider.DiscoveredServer {
 
     /**
@@ -24,6 +23,7 @@ class DiscoveredProxyServer implements ProxyProvider.DiscoveredServer {
      * Address of the server, the client should be able to connect using this
      * information.
      */
+    @Getter
     private final InetAddress address;
     /**
      * Default payload for discovery.

@@ -54,20 +54,27 @@ public final class SocketProxyProvider
     private final InetAddress broadcastAddress;
 
     /**
+     * To get addresses and sockets.
+     */
+    private final SocketUtils socketUtils;
+
+    /**
      * @param serverCfg the runtime server config
      * @param clientCfg the runtime client config
      * @param anyIp ip address of any host as a string (0.0.0.0 or ::).
      * @param broadcastIp the ip to broadcast (255.255.255.255 on ipv4).
+     * @param utils to get socket and object io streams.
      * @throws UnknownHostException the host is not known.
      */
     SocketProxyProvider(//
             final SocketProxyServerConfig serverCfg,
             final SocketProxyClientConfig clientCfg,
             final @Value("${touchy.anyIp}") String anyIp,
-            final @Value("${touchy.broadcastIp}") String broadcastIp)
-            throws UnknownHostException {
-        address = InetAddress.getByName(anyIp);
-        broadcastAddress = InetAddress.getByName(broadcastIp);
+            final @Value("${touchy.broadcastIp}") String broadcastIp,
+            final SocketUtils utils) throws UnknownHostException {
+        socketUtils = utils;
+        address = socketUtils.addressByName(anyIp);
+        broadcastAddress = socketUtils.addressByName(broadcastIp);
         serverConfig = serverCfg;
         clientConfig = clientCfg;
 
@@ -78,7 +85,8 @@ public final class SocketProxyProvider
             throws ProxyInitializationException {
 
         try {
-            return new SocketProxyServer(serverConfig, backEnd, address);
+            return new SocketProxyServer(serverConfig, backEnd, address,
+                    socketUtils);
         } catch (IOException e) {
             log.error("IOException while starting server on port: "
                     + serverConfig.getPort(), e);
@@ -92,7 +100,7 @@ public final class SocketProxyProvider
     public ClientProxy getClient(final DiscoveredProxyServer connectTo)
             throws ProxyInitializationException {
         try {
-            return new SocketProxyClient(clientConfig, connectTo);
+            return new SocketProxyClient(clientConfig, connectTo, socketUtils);
         } catch (IOException e) {
             // Handle these errors in the interface, so that the user may
             // change choose another server and/or retry.
@@ -120,7 +128,7 @@ public final class SocketProxyProvider
          */
         RunnableClosableQueueProvider() throws SocketException {
             list = new LinkedBlockingQueue<>();
-            datagramSocket = new DatagramSocket();
+            datagramSocket = socketUtils.datagramSocket();
         }
 
         @Override

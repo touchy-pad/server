@@ -1,10 +1,13 @@
 package touchy.pad.proxy.socket;
 
+import java.awt.Point;
+
 import org.junit.Test;
 
 import touchy.pad.ProxyProvider.CloseableQueueProvider;
 import touchy.pad.TouchLink.ClientProxy;
 import touchy.pad.TouchLink.ServerProxy;
+import touchy.pad.backend.NoTouchLink;
 
 /**
  * Tests the discovery proxy.
@@ -21,12 +24,21 @@ public final class DiscoveryProxyTest {
     @Test
     public void discovery() throws Exception {
 
+        final SocketProxyServerConfig serverConfig;
+        serverConfig = new SocketProxyServerConfig() {
+
+        };
+        final SocketProxyClientConfig clientConfig;
+        clientConfig = new SocketProxyClientConfig() {
+
+        };
+
         final SocketProxyProvider provider;
-        provider = new SocketProxyProvider(new SocketProxyServerConfig() {
-        }, new SocketProxyClientConfig() {
-        }, "0.0.0.0", "255.255.255.255");
+        provider = new SocketProxyProvider(serverConfig, clientConfig,
+                "0.0.0.0", "255.255.255.255", new SocketUtilsImpl());
         System.out.println("Starting server using fake backend");
-        final ServerProxy server = provider.getAndStartServer(null);
+        final ServerProxy server =
+                provider.getAndStartServer(new NoTouchLink());
         System.out.println("Getting queue");
         CloseableQueueProvider<DiscoveredProxyServer> discovered;
         discovered = provider.discoverServers();
@@ -36,6 +48,9 @@ public final class DiscoveryProxyTest {
         final ClientProxy client = provider.getClient(discoveredServer);
         System.out.println("Received client");
         client.sendClipboard("");
+        client.move(new Point(0, 0), true, true, true);
+        client.scroll(0);
+        client.receiveClipboard();
         discovered.close();
         server.close();
         client.close();

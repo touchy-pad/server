@@ -16,7 +16,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import touchy.pad.TouchLink;
 
@@ -33,7 +32,6 @@ public final class SocketProxyServer
     /**
      * In production this will hold the actual implementation mousing a pointer.
      */
-    @Delegate
     private final TouchLink.Backend backend;
 
     /**
@@ -62,6 +60,11 @@ public final class SocketProxyServer
     private final List<Pair<Thread, String>> threads = new LinkedList<>();
 
     /**
+     * To create socket related objects.
+     */
+    private final SocketUtils utils;
+
+    /**
      * Name of the server.
      */
     public static final String SERVER_NAME = "Touchy pad server";
@@ -75,13 +78,14 @@ public final class SocketProxyServer
      * @param conf the server, to obtain port number.
      * @param upstream the backend that actually moves things.
      * @param address the address to bind to.
+     * @param socketUtils to create sockets and address.
      * @throws IOException when the connection fails.
      */
     SocketProxyServer(final SocketProxyServerConfig conf,
-            final TouchLink.Backend upstream, final InetAddress address)
-            throws IOException {
+            final TouchLink.Backend upstream, final InetAddress address,
+            final SocketUtils socketUtils) throws IOException {
         backend = upstream;
-        this.config = conf;
+        config = conf;
         // Listen on a port for connection.
         log.error("Creating server socket on port: " + config.getPort());
         serverSocket = new ServerSocket(config.getPort());
@@ -89,9 +93,11 @@ public final class SocketProxyServer
         addAndRun(new Thread(this), "listening on socket");
         // Be discoverable through broadcast
 
-        datagramSocket = new DatagramSocket(config.getDiscoveryPort(), address);
+        final int port = config.getDiscoveryPort();
+        datagramSocket = socketUtils.datagramSocket(port, address);
         datagramSocket.setBroadcast(true);
         addAndRun(new Thread(this::makeDiscoverable), "disoverability");
+        utils = socketUtils;
     }
 
     /**
@@ -159,14 +165,14 @@ public final class SocketProxyServer
     void handleConnection(final Socket socket) {
         log.info("handleConnection called");
         try (ObjectOutputStream output =
-                new ObjectOutputStream(socket.getOutputStream())) {
+                utils.objectOutputStream(socket.getOutputStream())) {
 
             // Flush to unfreeze the ObjectInputStream on the other side, see
             // new ObjectInputStream().
             output.flush();
 
             try (ObjectInputStream input =
-                    new ObjectInputStream(socket.getInputStream());) {
+                    utils.objectInputStream(socket.getInputStream());) {
                 // While the connection is open, we expect the client to send
                 // a method proxy and wait for the result to be returned.
                 while (this.running.get()) {
@@ -192,7 +198,7 @@ public final class SocketProxyServer
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() throws IOException, InterruptedException {
         // Closing the socket causes all blocked accept() method calls to return
         // with a socket exception.
         log.info("Closing server socket");
@@ -202,14 +208,10 @@ public final class SocketProxyServer
         datagramSocket.close();
 
         running.set(false);
-        threads.forEach(pair -> {
+        for (Pair<Thread, String> pair : threads) {
             log.info("Stopping {}", pair.getValue());
-            try {
-                pair.getKey().join();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        });
+            pair.getKey().join();
+        }
     }
 
     /**
