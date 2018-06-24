@@ -9,12 +9,9 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.apache.commons.lang3.tuple.Pair;
 
 import lombok.extern.slf4j.Slf4j;
 import touchy.pad.TouchLink;
@@ -57,7 +54,7 @@ public final class SocketProxyServer
     /**
      * Thread to interrupt upon closing.
      */
-    private final List<Pair<Thread, String>> threads = new LinkedList<>();
+    private final List<Thread> threads = new LinkedList<>();
 
     /**
      * To create socket related objects.
@@ -90,13 +87,17 @@ public final class SocketProxyServer
         log.error("Creating server socket on port: " + config.getPort());
         serverSocket = new ServerSocket(config.getPort());
         log.error("Starting thread to accept connections.");
-        addAndRun(new Thread(this), "listening on socket");
+        final Thread listening = new Thread(this);
+        listening.setName("listening on socket");
+        addAndRun(listening);
         // Be discoverable through broadcast
 
         final int port = config.getDiscoveryPort();
         datagramSocket = socketUtils.datagramSocket(port, address);
         datagramSocket.setBroadcast(true);
-        addAndRun(new Thread(this::makeDiscoverable), "disoverability");
+        final Thread discoverability = new Thread(this::makeDiscoverable);
+        discoverability.setName("disoverability");
+        addAndRun(discoverability);
         utils = socketUtils;
     }
 
@@ -143,16 +144,18 @@ public final class SocketProxyServer
                 log.info("Socket opened.");
                 // Create a new thread, just for the connection with this
                 // client.
-                addAndRun(new Thread(() -> handleConnection(socket)),
-                        "connectionHandler");
+                final Thread connectionHandler;
+                connectionHandler = new Thread(() -> handleConnection(socket));
+                connectionHandler.setName("connectionHandler");
+                addAndRun(connectionHandler);
             }
         } catch (IOException e) {
             log.info("Somebody closed to socket, killing thread that listened "
                     + "on it.");
         }
-        openedSockets.forEach(t -> {
+        openedSockets.forEach(openedSocket -> {
             try {
-                t.close();
+                openedSocket.close();
             } catch (IOException e) {
                 log.error("Error while closing opened sockets", e);
             }
@@ -190,8 +193,6 @@ public final class SocketProxyServer
                     }
                 }
             }
-        } catch (SocketException e) {
-            log.info("Socket is closed");
         } catch (IOException | ClassNotFoundException e1) {
             log.error("Error communicating with client", e1);
         }
@@ -208,18 +209,17 @@ public final class SocketProxyServer
         datagramSocket.close();
 
         running.set(false);
-        for (Pair<Thread, String> pair : threads) {
-            log.info("Stopping {}", pair.getValue());
-            pair.getKey().join();
+        for (final Thread thread : threads) {
+            log.info("Stopping {}", thread.getName());
+            thread.join();
         }
     }
 
     /**
      * @param thread the thread to interrupt and join.
-     * @param description textual description.
      */
-    private void addAndRun(final Thread thread, final String description) {
-        this.threads.add(Pair.of(thread, description));
+    private void addAndRun(final Thread thread) {
+        this.threads.add(thread);
         thread.start();
     }
 }

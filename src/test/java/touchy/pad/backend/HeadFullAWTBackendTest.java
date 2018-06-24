@@ -4,7 +4,10 @@ import java.awt.Point;
 import java.awt.PointerInfo;
 import java.awt.Robot;
 import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -27,17 +30,28 @@ public final class HeadFullAWTBackendTest {
 
     /**
      * Constructs a test.
+     *
+     * @throws IOException when reading IO fails
+     * @throws UnsupportedFlavorException when the data flavor does not taste
+     *             well.
      */
-    public HeadFullAWTBackendTest() {
+    public HeadFullAWTBackendTest()
+            throws UnsupportedFlavorException, IOException {
         final Robot mockRobot = Mockito.mock(Robot.class);
         final Clipboard mockClipboard = Mockito.mock(Clipboard.class);
-        Mockito.when(mockClipboard.getContents(null))
-                .thenReturn(new StringSelection(""));
+        final StringSelection selection = new StringSelection("");
+        Mockito.when(mockClipboard.getContents(null)).thenReturn(selection);
         final PointerInfo mockPointerInfo = Mockito.mock(PointerInfo.class);
         Mockito.when(mockPointerInfo.getLocation()).thenReturn(new Point(0, 0));
+
+        final DataFlavor dataFlavor = Mockito.mock(DataFlavor.class);
+        Mockito.when(dataFlavor.getReaderForText(selection))
+                .thenReturn(new DataFlavor(String.class, "text")
+                        .getReaderForText(selection));
+
         final AwtSupplier awtSupplier;
-        awtSupplier =
-                new AwtSupplierImpl(mockRobot, mockClipboard, mockPointerInfo);
+        awtSupplier = new AwtSupplierImpl(mockRobot, mockClipboard,
+                mockPointerInfo, dataFlavor);
         sut = new AwtTouchLink(awtSupplier);
     }
 
@@ -47,7 +61,9 @@ public final class HeadFullAWTBackendTest {
     @Test
     public void checkMoving() {
         sut.move(new Point(0, 0), false, false, false).get();
+        sut.move(new Point(0, 0), false, false, false).get();
         sut.move(new Point(0, 0), true, true, true).get();
+        sut.move(new Point(0, 0), false, false, false).get();
     }
 
     /**
@@ -71,6 +87,35 @@ public final class HeadFullAWTBackendTest {
      */
     @Test
     public void checkReceiveClipboard() {
-        sut.receiveClipboard();
+        sut.receiveClipboard().get();
+    }
+
+    /**
+     * Check receive clipboard.
+     *
+     * @throws IOException when reading IO fails
+     * @throws UnsupportedFlavorException when the data flavor does not taste
+     *             well.
+     */
+    @Test
+    public void checkReceiveClipboardOnError()
+            throws UnsupportedFlavorException, IOException {
+        final TouchLink failingSut;
+        final Robot mockRobot = Mockito.mock(Robot.class);
+        final DataFlavor dataFlavor = Mockito.mock(DataFlavor.class);
+        final StringSelection selection = new StringSelection("");
+        final Clipboard mockClipboard = Mockito.mock(Clipboard.class);
+        Mockito.when(mockClipboard.getContents(null)).thenReturn(selection);
+        final PointerInfo mockPointerInfo = Mockito.mock(PointerInfo.class);
+        Mockito.when(mockPointerInfo.getLocation()).thenReturn(new Point(0, 0));
+
+        Mockito.when(dataFlavor.getReaderForText(selection))
+                .thenThrow(new IOException());
+
+        final AwtSupplier awtSupplier;
+        awtSupplier = new AwtSupplierImpl(mockRobot, mockClipboard,
+                mockPointerInfo, dataFlavor);
+        failingSut = new AwtTouchLink(awtSupplier);
+        failingSut.receiveClipboard().get();
     }
 }

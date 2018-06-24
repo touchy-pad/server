@@ -16,9 +16,7 @@ public interface RuntimeConfigurationBackend {
      * @param name the name of the configuration directive.
      * @param value the configured value.
      */
-    default void setBoolean(String name, boolean value) {
-
-    }
+    void setBoolean(String name, boolean value);
 
     /**
      * @param name the name of the configuration directive.
@@ -30,9 +28,7 @@ public interface RuntimeConfigurationBackend {
      * @param name the name of the configuration directive.
      * @param value the configured value.
      */
-    default void setInt(String name, int value) {
-
-    }
+    void setInt(String name, int value);
 
     /**
      * @param name the name of the configuration directive.
@@ -44,9 +40,7 @@ public interface RuntimeConfigurationBackend {
      * @param name the name of the configuration directive.
      * @param value the configured value.
      */
-    default void setLong(String name, long value) {
-
-    }
+    void setLong(String name, long value);
 
     /**
      * @param name the name of the configuration directive.
@@ -58,9 +52,7 @@ public interface RuntimeConfigurationBackend {
      * @param name the name of the configuration directive.
      * @param value the configured value.
      */
-    default void setFloat(String name, float value) {
-
-    }
+    void setFloat(String name, float value);
 
     /**
      * @param name the name of the configuration directive.
@@ -72,9 +64,7 @@ public interface RuntimeConfigurationBackend {
      * @param name the name of the configuration directive.
      * @param value the configured value.
      */
-    default void setDouble(String name, double value) {
-
-    }
+    void setDouble(String name, double value);
 
     /**
      * @param name the name of the configuration directive.
@@ -86,7 +76,5 @@ public interface RuntimeConfigurationBackend {
      * @param name the name of the configuration directive.
      * @param value the configured value.
      */
-    default void setString(String name, String value) {
-
-    }
+    void setString(String name, String value);
 }

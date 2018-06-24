@@ -44,4 +44,34 @@ public final class ConstantRuntimeConfigurationBackend
     public String getString(final String name) {
         return "string";
     }
+
+    @Override
+    public void setBoolean(final String name, final boolean value) {
+        // Nothing to set.
+    }
+
+    @Override
+    public void setInt(final String name, final int value) {
+        // Nothing to set.
+    }
+
+    @Override
+    public void setLong(final String name, final long value) {
+        // Nothing to set.
+    }
+
+    @Override
+    public void setFloat(final String name, final float value) {
+        // Nothing to set.
+    }
+
+    @Override
+    public void setDouble(final String name, final double value) {
+        // Nothing to set.
+    }
+
+    @Override
+    public void setString(final String name, final String value) {
+        // Nothing to set.
+    }
 }

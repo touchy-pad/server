@@ -3,6 +3,7 @@ package touchy.pad.backend;
 import java.util.function.BiFunction;
 import java.util.prefs.Preferences;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -15,7 +16,7 @@ import touchy.pad.RuntimeConfigurationBackend;
  * @author Jan Groothuijse
  */
 @Component
-@Profile("preferences")
+@Profile({ "production" })
 public final class PreferencesBackend implements RuntimeConfigurationBackend {
 
     /**
@@ -28,8 +29,9 @@ public final class PreferencesBackend implements RuntimeConfigurationBackend {
      *
      * @param name of the node.
      */
-    PreferencesBackend(final @Value(
-            value = "$preferences.key : 'touchy-pad'") String name) {
+    @Autowired
+    PreferencesBackend(
+            final @Value("$preferences.key : 'touchy-pad'") String name) {
         preferences = Preferences.userRoot().node(name);
     }
 

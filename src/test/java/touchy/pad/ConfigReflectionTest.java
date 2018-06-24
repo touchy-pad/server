@@ -21,4 +21,17 @@ public final class ConfigReflectionTest {
                 expectedMethods, RuntimeConfiguration.Util
                         .getConfigMethodsFor(SomeConfig.class).size());
     }
+
+    /**
+     * Tests method based names.
+     *
+     * @throws NoSuchMethodException if the method name is not correct
+     * @throws SecurityException if the method is not visibible
+     */
+    @Test
+    public void testUtil() throws NoSuchMethodException, SecurityException {
+        assertEquals("touchy.pad.ConfigReflectionTest.testUtil",
+                RuntimeConfiguration.Util
+                        .getConfigName(this.getClass().getMethod("testUtil")));
+    }
 }

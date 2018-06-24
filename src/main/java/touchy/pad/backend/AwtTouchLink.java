@@ -1,7 +1,6 @@
 package touchy.pad.backend;
 
 import java.awt.AWTException;
-import java.awt.HeadlessException;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.PointerInfo;
@@ -116,7 +115,7 @@ public final class AwtTouchLink implements TouchLink {
         try {
             final String content;
             final Transferable transferable;
-            final DataFlavor flavor = new DataFlavor(String.class, "text");
+            final DataFlavor flavor = awtSupplier.getDataFlavor();
             transferable = awtSupplier.getClipboard().getContents(null);
             content = IOUtils.toString(flavor.getReaderForText(transferable));
             return () -> content;
@@ -147,6 +146,11 @@ public final class AwtTouchLink implements TouchLink {
          * @return to query the mouse position.
          */
         PointerInfo getPointerInfo();
+
+        /**
+         * @return data flavor
+         */
+        DataFlavor getDataFlavor();
     }
 
     /**
@@ -175,15 +179,19 @@ public final class AwtTouchLink implements TouchLink {
         private final PointerInfo pointerInfo;
 
         /**
+         * Data flavor.
+         */
+        private final DataFlavor dataFlavor;
+
+        /**
          * Construct an awt supplier based, if ran on a system with a display.
          *
-         * @throws HeadlessException when the system has no display.
          * @throws AWTException when awt is unhappy.
          */
-        public AwtSupplierImpl() throws HeadlessException, AWTException {
+        public AwtSupplierImpl() throws AWTException {
             this(new Robot(), Toolkit.getDefaultToolkit().getSystemClipboard(),
-                    MouseInfo.getPointerInfo());
-            System.out.println("1222");
+                    MouseInfo.getPointerInfo(),
+                    new DataFlavor(String.class, "text"));
         }
     }
 }
