@@ -13,6 +13,8 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.InputEvent;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
@@ -193,5 +195,10 @@ public final class AwtTouchLink implements TouchLink {
                     MouseInfo.getPointerInfo(),
                     new DataFlavor(String.class, "text"));
         }
+    }
+
+    @Override
+    public List<String> getDescription() {
+        return Arrays.asList("AWT backend");
     }
 }

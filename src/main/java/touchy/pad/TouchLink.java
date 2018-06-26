@@ -1,6 +1,7 @@
 package touchy.pad;
 
 import java.awt.Point;
+import java.util.List;
 import java.util.function.Supplier;
 
 /**
@@ -44,6 +45,11 @@ public interface TouchLink {
      * @return the textual contents of the clipboard.
      */
     Supplier<String> receiveClipboard();
+
+    /**
+     * @return list of textual descriptions.
+     */
+    List<String> getDescription();
 
     /**
      * Flavor of TouchLink to indicate that the implementation live on the

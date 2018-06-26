@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Supplier;
 
 import lombok.extern.slf4j.Slf4j;
@@ -116,5 +118,11 @@ public final class SocketProxyClient
         final String string;
         string = (String) sendAndReceive(new MethodProxy.GetClipboard());
         return () -> string;
+    }
+
+    @Override
+    public List<String> getDescription() {
+        return Arrays.asList(
+                "Socket proxy client, using tcp sockets to relay commands");
     }
 }

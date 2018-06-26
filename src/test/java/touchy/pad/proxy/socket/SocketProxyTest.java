@@ -6,6 +6,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.awt.Point;
 import java.net.InetAddress;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
@@ -96,6 +98,11 @@ public final class SocketProxyTest {
         @Override
         public Supplier<String> receiveClipboard() {
             return () -> CLIPBOARD;
+        }
+
+        @Override
+        public List<String> getDescription() {
+            return Arrays.asList("Fake implementation");
         }
     };
 

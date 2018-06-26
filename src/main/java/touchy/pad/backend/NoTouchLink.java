@@ -1,6 +1,8 @@
 package touchy.pad.backend;
 
 import java.awt.Point;
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Supplier;
 
 import org.springframework.context.annotation.Profile;
@@ -36,6 +38,11 @@ public final class NoTouchLink implements TouchLink.Backend {
     @Override
     public Supplier<String> receiveClipboard() {
         return () -> "";
+    }
+
+    @Override
+    public List<String> getDescription() {
+        return Arrays.asList("No backend, stub implementation");
     }
 
 }
