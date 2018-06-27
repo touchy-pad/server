@@ -70,6 +70,10 @@ public interface TouchLink {
      */
     interface ServerProxy extends AutoCloseable {
 
+        /**
+         * @return list of textual descriptions.
+         */
+        List<String> getDescription();
     }
 
     /**

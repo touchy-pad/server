@@ -9,6 +9,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -221,5 +222,12 @@ public final class SocketProxyServer
     private void addAndRun(final Thread thread) {
         this.threads.add(thread);
         thread.start();
+    }
+
+    @Override
+    public List<String> getDescription() {
+        return Arrays.asList("Socket proxy server",
+                "Listening on port: " + config.getPort(),
+                "Link closed: " + serverSocket.isClosed());
     }
 }

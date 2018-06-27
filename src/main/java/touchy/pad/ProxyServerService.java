@@ -98,6 +98,16 @@ public class ProxyServerService implements AutoCloseable {
         return serverProxy.get();
     }
 
+    /**
+     * For introspction, so that the user may query for information relevant to
+     * the user.
+     * 
+     * @return the currenty active backend.
+     */
+    public TouchLink.Backend getBackEnd() {
+        return backEnd;
+    }
+
     @Override
     public final void close() throws Exception {
         serverProxy.get().close();
