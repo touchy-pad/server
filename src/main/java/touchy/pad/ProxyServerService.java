@@ -17,7 +17,7 @@ import touchy.pad.TouchLink.Backend;
  */
 @Component
 @Slf4j
-public class ServerService implements AutoCloseable {
+public class ProxyServerService implements AutoCloseable {
 
     /**
      * Provides proxy server.
@@ -45,7 +45,7 @@ public class ServerService implements AutoCloseable {
      * @throws ProxyInitializationException when something is misconfigured
      */
     @Autowired
-    ServerService(final ProxyProvider<? extends DiscoveredServer> p,
+    ProxyServerService(final ProxyProvider<? extends DiscoveredServer> p,
             final Backend b) throws ProxyInitializationException {
         provider = p;
         backEnd = b;
