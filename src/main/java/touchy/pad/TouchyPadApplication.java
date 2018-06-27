@@ -17,6 +17,7 @@ public interface TouchyPadApplication {
      * @param args will be ignored for now.
      */
     static void main(final String[] args) {
+        System.setProperty("java.awt.headless", "false");
         SpringApplication.run(TouchyPadApplication.class, args);
     }
 }

@@ -35,7 +35,9 @@ import touchy.pad.TouchLink;
  * @author Jan Groothuijse
  */
 @Slf4j
-public final class AwtTouchLink implements TouchLink {
+@Component
+@Profile("production")
+public final class AwtTouchLink implements TouchLink.Backend {
 
     /**
      * State of the left mouse button.
