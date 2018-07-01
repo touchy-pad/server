@@ -12,7 +12,7 @@ import touchy.pad.TouchLink.Backend;
 
 /**
  * Component to manage the proxy server.
- * 
+ *
  * @author Jan Groothuijse
  */
 @Component
@@ -22,23 +22,28 @@ public class ServerService implements AutoCloseable {
     /**
      * Provides proxy server.
      */
-    final ProxyProvider<? extends DiscoveredServer> provider;
+    private final ProxyProvider<? extends DiscoveredServer> provider;
     /**
      * The thing being proxied by the proxy server. The proxy server relais the
      * clients commands to this back end.
      */
-    final Backend backEnd;
+    private final Backend backEnd;
 
     /**
      * A reference to close, so that connection and other resources are handled
      * appropriatly. Mutable state.
      */
-    final AtomicReference<TouchLink.ServerProxy> serverProxy;
+    private final AtomicReference<TouchLink.ServerProxy> serverProxy;
     /**
      * Atomic flag to check if we are already restarting. Mutable state.
      */
-    final AtomicBoolean restart = new AtomicBoolean(false);
+    private final AtomicBoolean restart = new AtomicBoolean(false);
 
+    /**
+     * @param p proxy provider, to provide us with a proxy
+     * @param b the upstream touch link
+     * @throws ProxyInitializationException when something is misconfigured
+     */
     @Autowired
     ServerService(final ProxyProvider<? extends DiscoveredServer> p,
             final Backend b) throws ProxyInitializationException {
@@ -52,10 +57,10 @@ public class ServerService implements AutoCloseable {
 
     /**
      * Restarts the proxy server, which ever proxy server is configured.
-     * 
+     *
      * @throws ProxyInitializationException when starting the server fails.
      */
-    public void restart() throws ProxyInitializationException {
+    public final void restart() throws ProxyInitializationException {
         final boolean notRestarting = false;
         final boolean restarting = true;
         // If we are not already restarting, then set restart to true, to
@@ -74,8 +79,8 @@ public class ServerService implements AutoCloseable {
                 restart.set(notRestarting);
                 log.error("Failed to start proxy server, rethrowing exception.",
                         e);
-                // Rethrow so that the calling party is alerted and able to show
-                // the user some useful information.
+                // Re-throw so that the calling party is alerted and able to
+                // show the user some useful information.
                 throw e;
             }
             restart.set(notRestarting);
@@ -86,15 +91,15 @@ public class ServerService implements AutoCloseable {
 
     /**
      * For introspction, so that the user may query stuff.
-     * 
+     *
      * @return the currenty running proxy server
      */
-    public TouchLink.ServerProxy getProxyServer() {
+    public final TouchLink.ServerProxy getProxyServer() {
         return serverProxy.get();
     }
 
     @Override
-    public void close() throws Exception {
+    public final void close() throws Exception {
         serverProxy.get().close();
     }
 }
