@@ -28,12 +28,13 @@ import touchy.pad.TouchLink.ServerProxy;
  * @author Jan Groothuijse
  */
 public final class SocketProxyTest {
-
     /**
      * Configuration.
+     * @param seed to add to the port number
+     * @return a config for the client
      */
     private static SocketProxyClientConfig clientConfig(final int seed) {
-    	return new SocketProxyClientConfig() {
+        return new SocketProxyClientConfig() {
                 @Override
                 public String getHost() {
                     return "localhost";
@@ -47,9 +48,11 @@ public final class SocketProxyTest {
     }
     /**
      * Server config.
+     * @param seed to add to the port number
+     * @return a config for the server
      */
     private static SocketProxyServerConfig serverConfig(final int seed) {
-    	return new SocketProxyServerConfig() {
+        return new SocketProxyServerConfig() {
                 @Override
                 public int getPort() {
                     return PORT + seed;
@@ -128,8 +131,8 @@ public final class SocketProxyTest {
         discoveredProxy =
                 new DiscoveredProxyServer("", InetAddress.getLocalHost());
         final SocketProxyProvider provider =
-                new SocketProxyProvider(serverConfig(1), clientConfig(1), "0.0.0.0",
-                        "255.255.255.0", new SocketUtilsImpl());
+                new SocketProxyProvider(serverConfig(0), clientConfig(0),
+                        "0.0.0.0", "255.255.255.0", new SocketUtilsImpl());
         try (ServerProxy server = provider.getAndStartServer(fakeBackend);
                 ClientProxy client = provider.getClient(discoveredProxy)) {
 
@@ -151,10 +154,10 @@ public final class SocketProxyTest {
             assertEquals(point, client.move(point, true, true, true).get());
         }
 
-        final SocketProxyServer server = new SocketProxyServer(serverConfig(2),
+        final SocketProxyServer server = new SocketProxyServer(serverConfig(1),
                 fakeBackend, InetAddress.getByName("0.0.0.0"),
                 new SocketUtilsImpl());
-        final SocketProxyClient client = new SocketProxyClient(clientConfig(2),
+        final SocketProxyClient client = new SocketProxyClient(clientConfig(1),
                 discoveredProxy, new SocketUtilsImpl());
 
         client.close();
@@ -170,7 +173,7 @@ public final class SocketProxyTest {
     @Test
     public void discovery() throws Exception {
         final SocketProxyProvider provider;
-        provider = new SocketProxyProvider(serverConfig(3), clientConfig(3),
+        provider = new SocketProxyProvider(serverConfig(2), clientConfig(2),
                 "0.0.0.0", "255.255.255.0", new SocketUtilsImpl());
         System.out.println("Starting server using fake backend");
         final ServerProxy server = provider.getAndStartServer(fakeBackend);
