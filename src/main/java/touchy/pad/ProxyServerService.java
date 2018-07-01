@@ -101,10 +101,10 @@ public class ProxyServerService implements AutoCloseable {
     /**
      * For introspction, so that the user may query for information relevant to
      * the user.
-     * 
+     *
      * @return the currenty active backend.
      */
-    public TouchLink.Backend getBackEnd() {
+    public final TouchLink.Backend getBackEnd() {
         return backEnd;
     }
 

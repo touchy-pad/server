@@ -11,7 +11,7 @@ import touchy.pad.TouchLink.ServerProxy;
 
 /**
  * Allows the user to see the status of the application using a browser.
- * 
+ *
  * @author Jan Groothuijse
  */
 @Controller
@@ -28,7 +28,7 @@ public class StatusController {
      *         the application
      */
     @RequestMapping("/")
-    public ModelAndView view() {
+    public final ModelAndView view() {
         final ModelAndView viewModel = new ModelAndView("status");
         final ServerProxy server = proxyServerService.getProxyServer();
         viewModel.addObject("serverStatus", server.getDescription());
