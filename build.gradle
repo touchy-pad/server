@@ -40,7 +40,7 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-test')
 	testCompile('org.springframework.security:spring-security-test')
 	// https://mvnrepository.com/artifact/org.mockito/mockito-core
-	testCompile group: 'org.mockito', name: 'mockito-core', version: '2.15.0'
+	testCompile group: 'org.mockito', name: 'mockito-core', version: '2.19.0'
 	// https://mvnrepository.com/artifact/org.mockito/mockito-inline
-	testCompile group: 'org.mockito', name: 'mockito-inline', version: '2.15.0'	
+	testCompile group: 'org.mockito', name: 'mockito-inline', version: '2.19.0'	
 }
