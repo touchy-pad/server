@@ -3,4 +3,4 @@
  *
  * @author Jan Groothuijse
  */
-package touchy.pad.backend;
+package touchy.pad.desktopcontrol;

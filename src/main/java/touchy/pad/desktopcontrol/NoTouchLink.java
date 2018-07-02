@@ -1,4 +1,4 @@
-package touchy.pad.backend;
+package touchy.pad.desktopcontrol;
 
 import java.awt.Point;
 import java.util.Arrays;

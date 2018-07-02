@@ -1,7 +1,9 @@
-package touchy.pad.backend;
+package touchy.pad.desktopcontrol;
 
 import java.awt.AWTException;
 import java.awt.Point;
+
+import touchy.pad.desktopcontrol.AwtTouchLink;
 
 /**
  * Test to visually see the AwtTouchLink at work.

@@ -25,7 +25,7 @@ import touchy.pad.ProxyInitializationException;
 import touchy.pad.ProxyProvider.CloseableQueueProvider;
 import touchy.pad.TouchLink.ClientProxy;
 import touchy.pad.TouchLink.ServerProxy;
-import touchy.pad.backend.NoTouchLink;
+import touchy.pad.desktopcontrol.NoTouchLink;
 
 /**
  * Tests the discovery proxy.

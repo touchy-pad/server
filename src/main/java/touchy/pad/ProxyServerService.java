@@ -1,5 +1,6 @@
 package touchy.pad;
 
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -110,6 +111,13 @@ public class ProxyServerService implements AutoCloseable {
 
     @Override
     public final void close() throws Exception {
-        serverProxy.get().close();
+        // TODO make sure null is not possible here.
+        Optional.ofNullable(serverProxy.get()).ifPresent(server -> {
+            try {
+                server.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 }

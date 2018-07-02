@@ -1,8 +1,10 @@
-package touchy.pad.backend;
+package touchy.pad.settings;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+
+import touchy.pad.settings.PreferencesBackend;
 
 /**
  * Tests configuration backend using java.util.preferences.

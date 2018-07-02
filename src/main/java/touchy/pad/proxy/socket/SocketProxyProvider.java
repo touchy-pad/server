@@ -13,6 +13,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,7 @@ import touchy.pad.TouchLink.ServerProxy;
  * @author Jan Groothuijse
  */
 @Component("socketProxy")
+@Profile("production")
 @Slf4j
 public final class SocketProxyProvider
         implements ProxyProvider<DiscoveredProxyServer> {

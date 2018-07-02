@@ -1,4 +1,4 @@
-package touchy.pad.backend;
+package touchy.pad.desktopcontrol;
 
 import java.awt.AWTException;
 import java.awt.MouseInfo;

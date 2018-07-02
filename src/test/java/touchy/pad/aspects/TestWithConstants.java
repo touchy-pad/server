@@ -5,6 +5,8 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -12,7 +14,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import touchy.pad.RuntimeConfigurationBackend;
 import touchy.pad.SomeConfig;
 import touchy.pad.SpringConfig;
-import touchy.pad.backend.ConstantRuntimeConfigurationBackend;
+import touchy.pad.settings.ConstantRuntimeConfigurationBackend;
 
 /**
  * Tests that when the backend has a value, it will be returned by the config
@@ -24,8 +26,10 @@ import touchy.pad.backend.ConstantRuntimeConfigurationBackend;
  * @author Jan Groothuijse
  */
 @RunWith(SpringRunner.class)
+// To close the application context after the test:
+@DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 @ContextConfiguration(classes = SpringConfig.class)
-@ActiveProfiles({ "constant", "noTouchLink", })
+@ActiveProfiles({ "constant", "noTouchLink", "noProxyProvider" })
 public final class TestWithConstants {
 
     // given a backend that never returns null and also returns some

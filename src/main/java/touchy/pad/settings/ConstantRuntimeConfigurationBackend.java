@@ -1,4 +1,4 @@
-package touchy.pad.backend;
+package touchy.pad.settings;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;

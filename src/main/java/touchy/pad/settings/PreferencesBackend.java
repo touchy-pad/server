@@ -1,4 +1,4 @@
-package touchy.pad.backend;
+package touchy.pad.settings;
 
 import java.util.function.BiFunction;
 import java.util.prefs.Preferences;

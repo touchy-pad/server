@@ -1,4 +1,4 @@
-package touchy.pad.backend;
+package touchy.pad.desktopcontrol;
 
 import java.awt.Point;
 import java.awt.PointerInfo;
@@ -13,8 +13,9 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import touchy.pad.TouchLink;
-import touchy.pad.backend.AwtTouchLink.AwtSupplier;
-import touchy.pad.backend.AwtTouchLink.AwtSupplierImpl;
+import touchy.pad.desktopcontrol.AwtTouchLink;
+import touchy.pad.desktopcontrol.AwtTouchLink.AwtSupplier;
+import touchy.pad.desktopcontrol.AwtTouchLink.AwtSupplierImpl;
 
 /**
  * Test that needs a dekstop to run.

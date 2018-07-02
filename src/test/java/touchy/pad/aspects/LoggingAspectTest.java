@@ -3,6 +3,8 @@ package touchy.pad.aspects;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -16,8 +18,10 @@ import touchy.pad.TouchLink;
  * @author Jan Groothuijse
  */
 @RunWith(SpringRunner.class)
+// To close the application context after the test:
+@DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 @ContextConfiguration(classes = SpringConfig.class)
-@ActiveProfiles({ "noTouchLink", "allwaysNull" })
+@ActiveProfiles({ "noTouchLink", "allwaysNull", "noProxyProvider" })
 public final class LoggingAspectTest {
 
     /**
