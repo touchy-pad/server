@@ -13,7 +13,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import touchy.pad.TouchLink;
-import touchy.pad.desktopcontrol.AwtTouchLink;
 import touchy.pad.desktopcontrol.AwtTouchLink.AwtSupplier;
 import touchy.pad.desktopcontrol.AwtTouchLink.AwtSupplierImpl;
 
