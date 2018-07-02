@@ -15,6 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  *
  */
 @RunWith(SpringRunner.class)
+// To close the application context after the test:
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 @ActiveProfiles({ "allwaysNull", "noTouchLink" })
 @SpringBootTest(classes = TouchyPadApplication.class)
