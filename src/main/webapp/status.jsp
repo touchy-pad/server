@@ -1,0 +1,11 @@
+<html>
+	<head>
+		<title>Status</title>
+	</head>
+	<body>
+		<ul>
+		<li>${serverStatus}</li>
+		<li>${backEndStatus}</li>
+		</ul>
+	</body>
+</html>
