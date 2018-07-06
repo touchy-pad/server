@@ -1,18 +1,23 @@
 buildscript {
 	ext {
-		springBootVersion = '1.5.9.RELEASE'
+		springBootVersion = '2.0.3.RELEASE'
 	}
 	repositories {
 		mavenCentral()
 	}
 	dependencies {
+        classpath 'com.github.fgiannesini.libsass.gradle.plugin:libsass-gradle-plugin:+'
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
 	}
 }
 
+apply plugin: 'com.github.fgiannesini.libsass.gradle.plugin'
+
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
 apply plugin: "jacoco"
 apply plugin: 'checkstyle'
 apply plugin: 'jdepend'
@@ -25,20 +30,31 @@ repositories {
 	mavenCentral()
 }
 
+libSassParameters {
+	//Type: String Mandatory
+	//File path to compile (normally import other scss files)
+	//Can be overridden for production task
+	inputFilePath = "src/main/sass/style.scss"
+	
+	//Type: String Mandatory
+	//Compiled file path
+	//Can be overridden for production task
+	outputFilePath = "src/main/resources/static/style.css"
+}
+
+compileJava.dependsOn("compileLibSass")
+
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-aop')
-	compile('org.springframework.boot:spring-boot-starter-data-rest')
-	compile('org.springframework.boot:spring-boot-starter-security')
-	compile('org.springframework.boot:spring-boot-starter-thymeleaf')
 	compile('org.springframework.boot:spring-boot-starter-web')
-	runtime('com.h2database:h2')
+	compile('org.springframework.boot:spring-boot-starter-thymeleaf')
+    compileOnly('org.springframework.boot:spring-boot-starter-tomcat')
 	compile group: 'commons-io', name: 'commons-io', version: '2.6'
 	compile('org.projectlombok:lombok')
 	// https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
 	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
 	
 	compile('org.springframework.boot:spring-boot-starter-test')
-	testCompile('org.springframework.security:spring-security-test')
 	// https://mvnrepository.com/artifact/org.mockito/mockito-core
 	testCompile group: 'org.mockito', name: 'mockito-core', version: '2.19.0'
 	// https://mvnrepository.com/artifact/org.mockito/mockito-inline

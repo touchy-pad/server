@@ -1,0 +1,112 @@
+// Import css framework
+@import 'pure';
+
+// Import google fonts
+@import url(https://fonts.googleapis.com/css?family=Open+Sans|Raleway:400,800|Ubuntu);
+
+$header-font: Raleway;
+$content-font: Open Sans;
+
+$foreground: #221133;
+$background: #fefefe;
+$footerground: #ddd;
+$footerborder: #eee;
+$headerBackground: #89a;
+
+body {
+	background-color: $footerground;
+	font-family: $content-font;
+}
+
+h1, h2, h3 {
+	font-family: $header-font;
+	margin: 0px 5px 0px 5px;
+}
+
+#submenu {
+	background-color: $headerBackground;
+	min-height: 5px;
+}
+
+#nav a.current-sub-item.pure-menu-link {
+	background-color: $background;
+	color: $foreground;
+}
+
+a {
+	color: #221166;
+}
+
+p {
+	margin: 5px;
+}
+
+h1 {
+	font-weight: 800;
+	font-size: 2em;
+	font-style: normal;
+	margin-top: 15px;
+}
+
+h2 {
+	font-weight: 400;
+	font-size: 2em;
+	font-style: normal;
+	margin-bottom: 15px;
+}
+
+#nav {
+	background-color: $foreground;
+	color: $background;
+	font-size: 110%;
+	font-family: $content-font;
+	border-width: 0px 0px 15px 0px;
+}
+
+#nav a.pure-menu-link {
+	color: $background;	
+}
+
+#nav a.pure-menu-link:hover, #nav a.pure-menu-link.current-item:hover {
+	color: $foreground;	
+	background-color: #eee;
+}
+
+#nav a.pure-menu-link.current-item {
+	color: $foreground;
+	background-color: $headerBackground;
+}
+
+#main .pure-g [class*="pure-u"] {
+	font-family: $content-font;
+}
+
+table.pure-table {
+	border: none;
+	margin: 5px;
+}
+
+.pure-table th, .pure-table td {
+	border-left: 1px solid $background;	
+}
+
+#footer a {
+	color: #666;
+}
+
+#footer {
+	padding: 20px;
+	border-width: 20px 0px 0px 0px;
+	border-style: solid;
+	border-color: $footerborder;
+}
+
+#copy {
+	text-align: center;
+}
+
+#main {
+	padding: 10px 10px 80px 10px;
+	font-family: $content-font;
+	background-color: $background;
+}

@@ -37,7 +37,7 @@ import touchy.pad.TouchLink;
 @Slf4j
 @Component
 @Profile("production")
-public final class AwtTouchLink implements TouchLink.Backend {
+public class AwtTouchLink implements TouchLink.Backend {
 
     /**
      * State of the left mouse button.
@@ -64,7 +64,7 @@ public final class AwtTouchLink implements TouchLink.Backend {
     }
 
     @Override
-    public Supplier<Point> move(final Point delta, final boolean left,
+    public final Supplier<Point> move(final Point delta, final boolean left,
             final boolean middle, final boolean right) {
         // move first, click release later
         final Point pre;
@@ -105,17 +105,17 @@ public final class AwtTouchLink implements TouchLink.Backend {
     }
 
     @Override
-    public void scroll(final int amount) {
+    public final void scroll(final int amount) {
         awtSupplier.getRobot().mouseWheel(amount);
     }
 
     @Override
-    public void sendClipboard(final String text) {
+    public final void sendClipboard(final String text) {
         awtSupplier.getClipboard().setContents(new StringSelection(text), null);
     }
 
     @Override
-    public Supplier<String> receiveClipboard() {
+    public final Supplier<String> receiveClipboard() {
         try {
             final String content;
             final Transferable transferable;
@@ -200,7 +200,7 @@ public final class AwtTouchLink implements TouchLink.Backend {
     }
 
     @Override
-    public List<String> getDescription() {
+    public final List<String> getDescription() {
         return Arrays.asList("AWT backend");
     }
 }

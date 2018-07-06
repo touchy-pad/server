@@ -2,9 +2,11 @@ package touchy.pad.web;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import touchy.pad.ProxyServerService;
 import touchy.pad.TouchLink.Backend;
 import touchy.pad.TouchLink.ServerProxy;
@@ -16,6 +18,7 @@ import touchy.pad.TouchLink.ServerProxy;
  */
 @Controller
 @RequestMapping("/")
+@Slf4j
 @AllArgsConstructor
 public class StatusController {
     /**
@@ -27,9 +30,10 @@ public class StatusController {
      * @return view and model to render a page displaying the current status of
      *         the application
      */
-    @RequestMapping("/")
+    @RequestMapping(value = "/status", method = RequestMethod.GET)
     public final ModelAndView view() {
-        final ModelAndView viewModel = new ModelAndView("status");
+        log.info("handling GET request");
+        final ModelAndView viewModel = new ModelAndView("view");
         final ServerProxy server = proxyServerService.getProxyServer();
         viewModel.addObject("serverStatus", server.getDescription());
         final Backend backEnd = proxyServerService.getBackEnd();

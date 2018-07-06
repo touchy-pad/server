@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Status</title>
+<link rel="stylesheet" type="text/css" media="all"
+	href="../static/style.css" th:href="@{/style.css}" />
+  </head>
+
+  <body>
+  	<div th:replace="generic :: navbar">Menu placeholder</div>
+  	<div id="main">
+  	<h2 th:text="#{main.serverStatus}">Server status</h2>
+  	<p th:text="${serverStatus}">not available</p>
+  	<h2 th:text="#{main.backEndStatus}">Back end status</h2>
+  	<p th:text="${backEndStatus}">not available</p>
+  </div>
+  	<div th:replace="generic :: footer">Footer placeholder</div>
+  </body>
+
+</html>
