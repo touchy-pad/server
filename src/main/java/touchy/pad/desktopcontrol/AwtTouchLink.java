@@ -18,7 +18,10 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -37,7 +40,7 @@ import touchy.pad.TouchLink;
 @Slf4j
 @Component
 @Profile("production")
-public class AwtTouchLink implements TouchLink.Backend {
+public final class AwtTouchLink implements TouchLink.Backend {
 
     /**
      * State of the left mouse button.
@@ -59,16 +62,16 @@ public class AwtTouchLink implements TouchLink.Backend {
     /**
      * @param r awtSupplier to use.
      */
-    public AwtTouchLink(final AwtSupplier r) {
+    @Autowired
+    public AwtTouchLink(final @NotNull AwtSupplier r) {
         awtSupplier = r;
     }
 
     @Override
-    public final Supplier<Point> move(final Point delta, final boolean left,
+    public Supplier<Point> move(final Point delta, final boolean left,
             final boolean middle, final boolean right) {
         // move first, click release later
-        final Point pre;
-        pre = awtSupplier.getPointerInfo().getLocation();
+        final Point pre = awtSupplier.getPointerInfo().getLocation();
         awtSupplier.getRobot().mouseMove(delta.x + pre.x, delta.y + pre.y);
         // handle clicks
         handleMousePress(leftDown, left, InputEvent.BUTTON1_DOWN_MASK);
@@ -105,17 +108,17 @@ public class AwtTouchLink implements TouchLink.Backend {
     }
 
     @Override
-    public final void scroll(final int amount) {
+    public void scroll(final int amount) {
         awtSupplier.getRobot().mouseWheel(amount);
     }
 
     @Override
-    public final void sendClipboard(final String text) {
+    public void sendClipboard(final String text) {
         awtSupplier.getClipboard().setContents(new StringSelection(text), null);
     }
 
     @Override
-    public final Supplier<String> receiveClipboard() {
+    public Supplier<String> receiveClipboard() {
         try {
             final String content;
             final Transferable transferable;
@@ -167,25 +170,25 @@ public class AwtTouchLink implements TouchLink.Backend {
     @AllArgsConstructor
     @Profile("!noTouchLink")
     @Getter
-    public static class AwtSupplierImpl implements AwtSupplier {
+    public static final class AwtSupplierImpl implements AwtSupplier {
 
         /**
          * Awt robot instance.
          */
-        private final Robot robot;
+        private final @NotNull Robot robot;
         /**
          * Clipboard of the system.
          */
-        private final Clipboard clipboard;
+        private final @NotNull Clipboard clipboard;
         /**
          * To query the mouse position.
          */
-        private final PointerInfo pointerInfo;
+        private final @NotNull PointerInfo pointerInfo;
 
         /**
          * Data flavor.
          */
-        private final DataFlavor dataFlavor;
+        private final @NotNull DataFlavor dataFlavor;
 
         /**
          * Construct an awt supplier based, if ran on a system with a display.
@@ -200,7 +203,7 @@ public class AwtTouchLink implements TouchLink.Backend {
     }
 
     @Override
-    public final List<String> getDescription() {
+    public List<String> getDescription() {
         return Arrays.asList("AWT backend");
     }
 }

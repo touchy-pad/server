@@ -15,6 +15,12 @@
   	<p th:text="${serverStatus}">not available</p>
   	<h2 th:text="#{main.backEndStatus}">Back end status</h2>
   	<p th:text="${backEndStatus}">not available</p>
+  <form action="/status" method="POST">
+  	<input type="hidden" name="moveToRight" value="10">
+  	<input type="hidden" name="moveToBottom" value="10">
+  	<button type="submit">Move mouse on server</button>
+
+  </form>
   </div>
   	<div th:replace="generic :: footer">Footer placeholder</div>
   </body>
