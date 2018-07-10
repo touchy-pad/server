@@ -2,92 +2,92 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-<title>Fragments to include in other views.</title>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link rel="stylesheet" type="text/css" media="all"
-	href="../../css/style.css" th:href="@{/css/style.css}" />
-<link rel="stylesheet" type="text/css" media="all"
-	href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <title>Fragments to include in other views.</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <link rel="stylesheet" type="text/css" media="all"
+      href="../static/style.css" th:href="@{/css/style.css}" />
+  <link rel="stylesheet" type="text/css" media="all"
+      href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
 </head>
 <body>
-	<div th:fragment="navbar" id="nav">
-		<div class="pure-menu custom-restricted-width pure-menu-horizontal">
-			<span class="pure-menu-heading">Touchy pad</span>
+  <div th:fragment="navbar" id="nav">
+    <div class="pure-menu custom-restricted-width pure-menu-horizontal">
+      <span class="pure-menu-heading">Touchy pad</span>
 
-			<ul class="pure-menu-list">
-				<li class="pure-menu-item"><a href="/status" class="pure-menu-link"
-					th:text="#{main.status}"
-					th:classappend="${navItem == 'orders'}?current-item">Status</a></li>
-				<li class="pure-menu-item"><a href="/configuration"
-					class="pure-menu-link" th:text="#{main.configuration}"
-					th:href="@{/status}"
-					th:classappend="${navItem == 'products'}?current-item">Configuration</a>
-				</li>
-			</ul>
-		</div>
-	</div>
+      <ul class="pure-menu-list">
+        <li class="pure-menu-item"><a href="/status" class="pure-menu-link"
+          th:text="#{main.status}"
+          th:classappend="${navItem == 'orders'}?current-item">Status</a></li>
+        <li class="pure-menu-item"><a href="/configuration"
+          class="pure-menu-link" th:text="#{main.configuration}"
+          th:href="@{/status}"
+          th:classappend="${navItem == 'products'}?current-item">Configuration</a>
+        </li>
+      </ul>
+    </div>
+  </div>
 
-	<div id="main">
-		<h1>Fragments</h1>
-		<p>The navigation above is the canonical definition of navigation
-			in this web application. It is used using &lt;div
-			th:include=&quot;generic :: navbar&quot;&gt;&lt;/div&gt;</p>
+  <div id="main">
+    <h1>Fragments</h1>
+    <p>The navigation above is the canonical definition of navigation
+      in this web application. To use it in another view please include: &lt;div
+      th:include=&quot;generic :: navbar&quot;&gt;&lt;/div&gt;</p>
 
-		<h1>Pagination</h1>
-		<p>The pagination section below is the canonical definition of
-			pagination in this web application.It is used using &lt;div
-			th:include=&quot;generic :: pagination&quot;&gt;&lt;/div&gt;</p>
+    <h1>Pagination</h1>
+    <p>The pagination section below is the canonical definition of
+      pagination in this web application. To use it in another view please include: &lt;div
+      th:include=&quot;generic :: pagination&quot;&gt;&lt;/div&gt;</p>
 
-		<div class="pagination" th:fragment="pagination">
-			<!-- 
-				int page
-				IntStream pages
-			 -->
-			<!-- first page -->
-			<a th:if="${page > 0}" href="first" th:href="@{${pagingUrl}(page=0)}">
-				<i class="fa fa-angle-double-left" aria-hidden="true">
-				</i>
-			</a>
-			<!-- previous page -->
-			<a th:if="${page > 0}" href="previous"
-				th:href="@{${pagingUrl}(page=${page - 1})}">
-				<i class="fa fa-angle-left" aria-hidden="true">
-				</i>
-			</a> 
-			<!-- numbered pages -->
-			<span th:each="p : ${pages}"> <a th:if="${p != page}" href="1"
-				th:href="@{${pagingUrl}(page=${p})}" th:text="${p + 1}">1</a> <span
-				th:if="${p == page}" th:text="${p + 1}">2</span>
-			</span> <a href="2" th:remove="all">2</a>
+    <div class="pagination" th:fragment="pagination">
+      <!-- 
+        int page
+        IntStream pages
+       -->
+      <!-- first page -->
+      <a th:if="${page > 0}" href="first" th:href="@{${pagingUrl}(page=0)}">
+        <i class="fa fa-angle-double-left" aria-hidden="true">
+        </i>
+      </a>
+      <!-- previous page -->
+      <a th:if="${page > 0}" href="previous"
+        th:href="@{${pagingUrl}(page=${page - 1})}">
+        <i class="fa fa-angle-left" aria-hidden="true">
+        </i>
+      </a> 
+      <!-- numbered pages -->
+      <span th:each="p : ${pages}"> <a th:if="${p != page}" href="1"
+        th:href="@{${pagingUrl}(page=${p})}" th:text="${p + 1}">1</a> <span
+        th:if="${p == page}" th:text="${p + 1}">2</span>
+      </span> <a href="2" th:remove="all">3</a>
 
-			<!-- next page -->
-			<a th:if="${page < lastPage}" href="last"
-				th:href="@{${pagingUrl}(page=${page + 1})}"><i
-				class="fa fa-angle-right" aria-hidden="true"></i></a> <i
-				th:if="${page == lastPage}" class="fa fa-angle-right"
-				aria-hidden="true"></i>
+      <!-- next page -->
+      <a th:if="${page < lastPage}" href="last"
+        th:href="@{${pagingUrl}(page=${page + 1})}"><i
+        class="fa fa-angle-right" aria-hidden="true"></i></a> <i
+        th:if="${page == lastPage}" class="fa fa-angle-right"
+        aria-hidden="true"></i>
 
-			<!-- last page -->
-			<a th:if="${page < lastPage}" href="last"
-				th:href="@{${pagingUrl}(page=${lastPage})}"><i
-				class="fa fa-angle-double-right" aria-hidden="true"></i></a> <i
-				th:if="${page == lastPage}" class="fa fa-angle-double-right"
-				aria-hidden="true"></i>
-			<!-- How to supply links to these things? -->
-		</div>
+      <!-- last page -->
+      <a th:if="${page < lastPage}" href="last"
+        th:href="@{${pagingUrl}(page=${lastPage})}"><i
+        class="fa fa-angle-double-right" aria-hidden="true"></i></a> <i
+        th:if="${page == lastPage}" class="fa fa-angle-double-right"
+        aria-hidden="true"></i>
+      <!-- How to supply links to these things? -->
+    </div>
 
-		<h1>Footer fragment</h1>
+    <h1>Footer fragment</h1>
 
-		<p>The footer below is the canonical definition of footers in this
-			web application. It is used using &lt;div th:include=&quot;generic ::
-			footer&quot;&gt;&lt;/div&gt;</p>
-	</div>
-	<div th:fragment="footer" id="footer">
-		<div class="pure-g">
-			<div class="pure-u-1-1 vcard" id="copy">Touchy pad
-			</div>
-		</div>
-	</div>
+    <p>The footer below is the canonical definition of footers in this
+      web application. To use it in another view please include: &lt;div th:include=&quot;generic ::
+      footer&quot;&gt;&lt;/div&gt;</p>
+  </div>
+  <div th:fragment="footer" id="footer">
+    <div class="pure-g">
+      <div class="pure-u-1-1 vcard" id="copy">Touchy pad<br /><i>Very moving, many mouse</i>
+      </div>
+    </div>
+  </div>
 </body>
 
 </html>
