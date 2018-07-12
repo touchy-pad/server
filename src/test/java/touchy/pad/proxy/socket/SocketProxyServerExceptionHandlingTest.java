@@ -24,6 +24,11 @@ public final class SocketProxyServerExceptionHandlingTest {
             throws IOException, InterruptedException {
         final SocketProxyServer sut =
                 new SocketProxyServer(new SocketProxyServerConfig() {
+
+                    @Override
+                    public String getMessage() {
+                        return null;
+                    }
                 }, null, InetAddress.getByName("0.0.0.0"),
                         new SocketUtilsImpl());
 
@@ -42,6 +47,11 @@ public final class SocketProxyServerExceptionHandlingTest {
     public void handleConnectionGetInputThrows()
             throws IOException, InterruptedException {
         final SocketProxyServerConfig config = new SocketProxyServerConfig() {
+
+            @Override
+            public String getMessage() {
+                return null;
+            }
 
         };
 

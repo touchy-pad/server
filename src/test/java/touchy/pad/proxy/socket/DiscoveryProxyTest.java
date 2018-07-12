@@ -50,8 +50,18 @@ public final class DiscoveryProxyTest {
     public DiscoveryProxyTest() {
         serverConfig = new SocketProxyServerConfig() {
 
+            @Override
+            public String getMessage() {
+                return null;
+            }
+
         };
         clientConfig = new SocketProxyClientConfig() {
+
+            @Override
+            public String getMessage() {
+                return null;
+            }
 
         };
     }

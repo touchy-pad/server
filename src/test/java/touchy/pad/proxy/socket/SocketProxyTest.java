@@ -30,35 +30,49 @@ import touchy.pad.TouchLink.ServerProxy;
 public final class SocketProxyTest {
     /**
      * Configuration.
+     *
      * @param seed to add to the port number
      * @return a config for the client
      */
     private static SocketProxyClientConfig clientConfig(final int seed) {
         return new SocketProxyClientConfig() {
-                @Override
-                public String getHost() {
-                    return "localhost";
-                }
+            @Override
+            public String getHost() {
+                return "localhost";
+            }
 
-                @Override
-                public int getPort() {
-                    return PORT + seed;
-                }
-            };
+            @Override
+            public int getPort() {
+                return PORT + seed;
+            }
+
+            @Override
+            public String getMessage() {
+                return null;
+            }
+        };
     }
+
     /**
      * Server config.
+     *
      * @param seed to add to the port number
      * @return a config for the server
      */
     private static SocketProxyServerConfig serverConfig(final int seed) {
         return new SocketProxyServerConfig() {
-                @Override
-                public int getPort() {
-                    return PORT + seed;
-                }
-            };
+            @Override
+            public int getPort() {
+                return PORT + seed;
+            }
+
+            @Override
+            public String getMessage() {
+                return null;
+            }
+        };
     }
+
     /**
      * Port number.
      */

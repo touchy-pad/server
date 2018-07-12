@@ -1,17 +1,18 @@
 package touchy.pad.proxy.socket;
 
 import touchy.pad.RuntimeConfiguration;
+import touchy.pad.UserConfiguration;
 
 /**
  * Client configuration.
  *
  * @author Jan Groothuijse
  */
-public interface SocketProxyClientConfig {
+public interface SocketProxyClientConfig extends UserConfiguration {
     /**
      * @return hostname of the server as a string.
      */
-    @RuntimeConfiguration
+    @RuntimeConfiguration("host")
     default String getHost() {
         return "localhost";
     }
@@ -19,7 +20,7 @@ public interface SocketProxyClientConfig {
     /**
      * @return port number the server is listening on.
      */
-    @RuntimeConfiguration
+    @RuntimeConfiguration("port")
     default int getPort() {
         return SocketProxyServer.DEFAULT_PORT;
     }

@@ -1,6 +1,7 @@
 package touchy.pad.proxy.socket;
 
 import touchy.pad.RuntimeConfiguration;
+import touchy.pad.UserConfiguration;
 
 /**
  * Configuration with default implementation to supply default values. Actual
@@ -8,12 +9,12 @@ import touchy.pad.RuntimeConfiguration;
  *
  * @author Jan Groothuijse
  */
-public interface SocketProxyServerConfig {
+public interface SocketProxyServerConfig extends UserConfiguration {
 
     /**
      * @return the configured port number.
      */
-    @RuntimeConfiguration
+    @RuntimeConfiguration("port")
     default int getPort() {
         return SocketProxyServer.DEFAULT_PORT;
     }
@@ -21,7 +22,7 @@ public interface SocketProxyServerConfig {
     /**
      * @return the port used for discovery using broadcast.
      */
-    @RuntimeConfiguration
+    @RuntimeConfiguration("discoveryPort")
     default int getDiscoveryPort() {
         return DiscoveredProxyServer.DISCOVERY_PORT;
     }
@@ -36,7 +37,7 @@ public interface SocketProxyServerConfig {
     /**
      * @return the name of the server.
      */
-    @RuntimeConfiguration
+    @RuntimeConfiguration("serverName")
     default String getServerName() {
         return SocketProxyServer.SERVER_NAME;
     }

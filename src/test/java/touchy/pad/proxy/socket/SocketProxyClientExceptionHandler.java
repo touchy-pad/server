@@ -24,6 +24,11 @@ public final class SocketProxyClientExceptionHandler {
     public void testIOExceptionInClose() throws Exception {
         final SocketProxyClientConfig config = new SocketProxyClientConfig() {
 
+            @Override
+            public String getMessage() {
+                return null;
+            }
+
         };
 
         final SocketUtils socketUtils = Mockito.mock(SocketUtils.class);
@@ -50,6 +55,11 @@ public final class SocketProxyClientExceptionHandler {
     @Test
     public void testIOExceptionInWrite() throws Exception {
         final SocketProxyClientConfig config = new SocketProxyClientConfig() {
+
+            @Override
+            public String getMessage() {
+                return null;
+            }
 
         };
 
@@ -83,6 +93,11 @@ public final class SocketProxyClientExceptionHandler {
     public void testIOExceptionInRead() throws Exception {
         final SocketProxyClientConfig config = new SocketProxyClientConfig() {
 
+            @Override
+            public String getMessage() {
+                return null;
+            }
+
         };
 
         final SocketUtils socketUtils = Mockito.mock(SocketUtils.class);
@@ -110,6 +125,11 @@ public final class SocketProxyClientExceptionHandler {
     @Test
     public void testClassNotFoundExceptionInRead() throws Exception {
         final SocketProxyClientConfig config = new SocketProxyClientConfig() {
+
+            @Override
+            public String getMessage() {
+                return null;
+            }
 
         };
 

@@ -10,4 +10,9 @@ import org.springframework.stereotype.Component;
 @Component("socketClientProxyConfigImpl")
 public class SocketClientProxyConfigImpl implements SocketProxyClientConfig {
 
+    @Override
+    public final String getMessage() {
+        return "tcpClient";
+    }
+
 }

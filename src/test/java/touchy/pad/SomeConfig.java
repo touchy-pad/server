@@ -10,7 +10,7 @@ public interface SomeConfig {
     /**
      * @return a boolean.
      */
-    @RuntimeConfiguration
+    @RuntimeConfiguration("")
     default boolean someBool() {
         return false;
     }
@@ -18,7 +18,7 @@ public interface SomeConfig {
     /**
      * @return a int.
      */
-    @RuntimeConfiguration
+    @RuntimeConfiguration("")
     default int someInt() {
         return 0;
     }
@@ -26,7 +26,7 @@ public interface SomeConfig {
     /**
      * @return a long.
      */
-    @RuntimeConfiguration
+    @RuntimeConfiguration("")
     default long someLong() {
         return 0L;
     }
@@ -34,7 +34,7 @@ public interface SomeConfig {
     /**
      * @return a string.
      */
-    @RuntimeConfiguration
+    @RuntimeConfiguration("")
     default String someString() {
         return "";
     }
@@ -42,7 +42,7 @@ public interface SomeConfig {
     /**
      * @return a float.
      */
-    @RuntimeConfiguration
+    @RuntimeConfiguration("")
     default float someFloat() {
         return 0.0f;
     }
@@ -50,7 +50,7 @@ public interface SomeConfig {
     /**
      * @return a double.
      */
-    @RuntimeConfiguration
+    @RuntimeConfiguration("")
     default double someDouble() {
         return 0.0;
     }

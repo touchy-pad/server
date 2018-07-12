@@ -25,6 +25,15 @@ import org.springframework.util.ReflectionUtils;
 public @interface RuntimeConfiguration {
 
     /**
+     * In the message, there should be a config.x.name and a
+     * config.x.description given that message is x.
+     *
+     * @return message to find name and descritption in the messages using
+     *         config. as prefix and .name and .description as suffix.
+     */
+    String value();
+
+    /**
      * Utility class to inspect and reflect on configuration interfaces.
      *
      * Users of configuration, objects that depend on configuration do not need

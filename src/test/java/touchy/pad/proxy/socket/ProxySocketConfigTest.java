@@ -62,6 +62,11 @@ public final class ProxySocketConfigTest {
             public int getPort() {
                 return 1;
             }
+
+            @Override
+            public String getMessage() {
+                return null;
+            }
         };
 
         final SocketProxyProvider provider;
