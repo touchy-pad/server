@@ -1,4 +1,4 @@
-package touchy.pad.proxy.socket;
+package touchy.pad.connectivity.socket;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -17,8 +17,8 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
-import touchy.pad.ProxyInitializationException;
-import touchy.pad.ProxyProvider;
+import touchy.pad.ConnectivityInitializationException;
+import touchy.pad.ConnectivityProvider;
 import touchy.pad.TouchLink;
 import touchy.pad.TouchLink.ClientProxy;
 import touchy.pad.TouchLink.ServerProxy;
@@ -34,18 +34,18 @@ import touchy.pad.TouchLink.ServerProxy;
 @Component("socketProxy")
 @Profile("production")
 @Slf4j
-public final class SocketProxyProvider
-        implements ProxyProvider<DiscoveredProxyServer> {
+public final class SocketConnectivityProvider
+        implements ConnectivityProvider<DiscoveredSocketServer> {
 
     /**
      * Server config.
      */
-    private final SocketProxyServerConfig serverConfig;
+    private final SocketServerConfig serverConfig;
 
     /**
      * Client config.
      */
-    private final SocketProxyClientConfig clientConfig;
+    private final SocketClientConfig clientConfig;
     /**
      * Address to refer to all addresses.
      */
@@ -68,9 +68,9 @@ public final class SocketProxyProvider
      * @param utils to get socket and object io streams.
      * @throws UnknownHostException the host is not known.
      */
-    SocketProxyProvider(//
-            final SocketProxyServerConfig serverCfg,
-            final SocketProxyClientConfig clientCfg,
+    SocketConnectivityProvider(//
+            final SocketServerConfig serverCfg,
+            final SocketClientConfig clientCfg,
             final @Value("${touchy.anyIp}") String anyIp,
             final @Value("${touchy.broadcastIp}") String broadcastIp,
             final SocketUtils utils) throws UnknownHostException {
@@ -84,29 +84,29 @@ public final class SocketProxyProvider
 
     @Override
     public ServerProxy getAndStartServer(final TouchLink.Backend backEnd)
-            throws ProxyInitializationException {
+            throws ConnectivityInitializationException {
 
         try {
-            return new SocketProxyServer(serverConfig, backEnd, address,
+            return new SocketServer(serverConfig, backEnd, address,
                     socketUtils);
         } catch (IOException e) {
             log.error("IOException while starting server on port: "
                     + serverConfig.getPort(), e);
             // Handle these errors in the interface, so that the user may
             // change config and/or retry.
-            throw new ProxyInitializationException(e);
+            throw new ConnectivityInitializationException(e);
         }
     }
 
     @Override
-    public ClientProxy getClient(final DiscoveredProxyServer connectTo)
-            throws ProxyInitializationException {
+    public ClientProxy getClient(final DiscoveredSocketServer connectTo)
+            throws ConnectivityInitializationException {
         try {
-            return new SocketProxyClient(clientConfig, connectTo, socketUtils);
+            return new SocketClient(clientConfig, connectTo, socketUtils);
         } catch (IOException e) {
             // Handle these errors in the interface, so that the user may
             // change choose another server and/or retry.
-            throw new ProxyInitializationException(e);
+            throw new ConnectivityInitializationException(e);
         }
     }
 
@@ -114,8 +114,8 @@ public final class SocketProxyProvider
      * Combines a list and socket, ties the lifetime of the socket to the
      * lifetime of the list provider.
      */
-    private class RunnableClosableQueueProvider
-            implements CloseableQueueProvider<DiscoveredProxyServer>, Runnable {
+    private class RunnableClosableQueueProvider implements
+            CloseableQueueProvider<DiscoveredSocketServer>, Runnable {
         /**
          * Socket to send and receive data.
          */
@@ -123,7 +123,7 @@ public final class SocketProxyProvider
         /**
          * List of discovered servers.
          */
-        private final BlockingQueue<DiscoveredProxyServer> list;
+        private final BlockingQueue<DiscoveredSocketServer> list;
 
         /**
          * @throws SocketException when no new datagram socket can be made.
@@ -134,7 +134,7 @@ public final class SocketProxyProvider
         }
 
         @Override
-        public BlockingQueue<DiscoveredProxyServer> get() {
+        public BlockingQueue<DiscoveredSocketServer> get() {
             return list;
         }
 
@@ -167,7 +167,7 @@ public final class SocketProxyProvider
                     final String message;
                     message = new String(receivePacket.getData()).trim();
                     datagramSocket.close();
-                    list.add(new DiscoveredProxyServer(message,
+                    list.add(new DiscoveredSocketServer(message,
                             receivePacket.getAddress()));
                     log.info(message + " from "
                             + receivePacket.getAddress().getHostAddress());
@@ -217,7 +217,7 @@ public final class SocketProxyProvider
     }
 
     @Override
-    public CloseableQueueProvider<DiscoveredProxyServer> discoverServers() {
+    public CloseableQueueProvider<DiscoveredSocketServer> discoverServers() {
         try {
             final RunnableClosableQueueProvider result;
             result = new RunnableClosableQueueProvider();

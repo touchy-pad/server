@@ -13,7 +13,7 @@ import org.springframework.context.annotation.PropertySource;
 @Configuration
 @EnableAspectJAutoProxy
 @ComponentScan({ "touchy.pad", "touchy.pad.aspects",
-        "touchy.pad.desktopcontrol", "touchy.pad.proxy.socket",
+        "touchy.pad.desktopcontrol", "touchy.pad.connectivity.socket",
         "touchy.pad.settings", "touchy.pad.web" })
 @PropertySource("classpath:application.properties")
 public class SpringConfig {

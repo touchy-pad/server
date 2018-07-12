@@ -1,4 +1,4 @@
-package touchy.pad.proxy.socket;
+package touchy.pad.connectivity.socket;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -25,8 +25,7 @@ import touchy.pad.TouchLink;
  * @author Jan Groothuijse
  */
 @Slf4j
-public final class SocketProxyServer
-        implements TouchLink.ServerProxy, Runnable {
+public final class SocketServer implements TouchLink.ServerProxy, Runnable {
     /**
      * In production this will hold the actual implementation mousing a pointer.
      */
@@ -45,7 +44,7 @@ public final class SocketProxyServer
     /**
      * Configuration relevant to the server.
      */
-    private final SocketProxyServerConfig config;
+    private final SocketServerConfig config;
 
     /**
      * Whether the server is still running.
@@ -79,7 +78,7 @@ public final class SocketProxyServer
      * @param socketUtils to create sockets and address.
      * @throws IOException when the connection fails.
      */
-    SocketProxyServer(final SocketProxyServerConfig conf,
+    SocketServer(final SocketServerConfig conf,
             final TouchLink.Backend upstream, final InetAddress address,
             final SocketUtils socketUtils) throws IOException {
         backend = upstream;

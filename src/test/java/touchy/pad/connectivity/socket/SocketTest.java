@@ -1,4 +1,4 @@
-package touchy.pad.proxy.socket;
+package touchy.pad.connectivity.socket;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 import org.junit.Before;
 import org.junit.Test;
 
-import touchy.pad.ProxyProvider.CloseableQueueProvider;
+import touchy.pad.ConnectivityProvider.CloseableQueueProvider;
 import touchy.pad.TouchLink;
 import touchy.pad.TouchLink.ClientProxy;
 import touchy.pad.TouchLink.ServerProxy;
@@ -27,15 +27,15 @@ import touchy.pad.TouchLink.ServerProxy;
  *
  * @author Jan Groothuijse
  */
-public final class SocketProxyTest {
+public final class SocketTest {
     /**
      * Configuration.
      *
      * @param seed to add to the port number
      * @return a config for the client
      */
-    private static SocketProxyClientConfig clientConfig(final int seed) {
-        return new SocketProxyClientConfig() {
+    private static SocketClientConfig clientConfig(final int seed) {
+        return new SocketClientConfig() {
             @Override
             public String getHost() {
                 return "localhost";
@@ -59,8 +59,8 @@ public final class SocketProxyTest {
      * @param seed to add to the port number
      * @return a config for the server
      */
-    private static SocketProxyServerConfig serverConfig(final int seed) {
-        return new SocketProxyServerConfig() {
+    private static SocketServerConfig serverConfig(final int seed) {
+        return new SocketServerConfig() {
             @Override
             public int getPort() {
                 return PORT + seed;
@@ -141,11 +141,11 @@ public final class SocketProxyTest {
     @Test
     public void test() throws Exception {
 
-        final DiscoveredProxyServer discoveredProxy;
+        final DiscoveredSocketServer discoveredProxy;
         discoveredProxy =
-                new DiscoveredProxyServer("", InetAddress.getLocalHost());
-        final SocketProxyProvider provider =
-                new SocketProxyProvider(serverConfig(0), clientConfig(0),
+                new DiscoveredSocketServer("", InetAddress.getLocalHost());
+        final SocketConnectivityProvider provider =
+                new SocketConnectivityProvider(serverConfig(0), clientConfig(0),
                         "0.0.0.0", "255.255.255.0", new SocketUtilsImpl());
         try (ServerProxy server = provider.getAndStartServer(fakeBackend);
                 ClientProxy client = provider.getClient(discoveredProxy)) {
@@ -168,10 +168,10 @@ public final class SocketProxyTest {
             assertEquals(point, client.move(point, true, true, true).get());
         }
 
-        final SocketProxyServer server = new SocketProxyServer(serverConfig(1),
+        final SocketServer server = new SocketServer(serverConfig(1),
                 fakeBackend, InetAddress.getByName("0.0.0.0"),
                 new SocketUtilsImpl());
-        final SocketProxyClient client = new SocketProxyClient(clientConfig(1),
+        final SocketClient client = new SocketClient(clientConfig(1),
                 discoveredProxy, new SocketUtilsImpl());
 
         client.close();
@@ -186,18 +186,19 @@ public final class SocketProxyTest {
      */
     @Test
     public void discovery() throws Exception {
-        final SocketProxyProvider provider;
-        provider = new SocketProxyProvider(serverConfig(2), clientConfig(2),
-                "0.0.0.0", "255.255.255.0", new SocketUtilsImpl());
+        final SocketConnectivityProvider provider;
+        provider =
+                new SocketConnectivityProvider(serverConfig(2), clientConfig(2),
+                        "0.0.0.0", "255.255.255.0", new SocketUtilsImpl());
         System.out.println("Starting server using fake backend");
         final ServerProxy server = provider.getAndStartServer(fakeBackend);
         System.out.println("Getting queue");
-        CloseableQueueProvider<DiscoveredProxyServer> discovered;
+        CloseableQueueProvider<DiscoveredSocketServer> discovered;
         discovered = provider.discoverServers();
         System.out.println("Received queue, waiting for discoved element.");
-        DiscoveredProxyServer discoveredServer = discovered.get().take();
+        DiscoveredSocketServer discoveredSocketServer = discovered.get().take();
         System.out.println("Discovered a server");
-        final ClientProxy client = provider.getClient(discoveredServer);
+        final ClientProxy client = provider.getClient(discoveredSocketServer);
         System.out.println("Received client");
         assertFalse(typed.get());
         client.sendClipboard("");

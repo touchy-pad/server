@@ -3,9 +3,9 @@ package touchy.pad.aspects;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import touchy.pad.ProxyInitializationException;
-import touchy.pad.ProxyProvider;
-import touchy.pad.ProxyProvider.DiscoveredServer;
+import touchy.pad.ConnectivityInitializationException;
+import touchy.pad.ConnectivityProvider;
+import touchy.pad.ConnectivityProvider.DiscoveredServer;
 import touchy.pad.TouchLink.Backend;
 import touchy.pad.TouchLink.ClientProxy;
 import touchy.pad.TouchLink.ServerProxy;
@@ -19,17 +19,18 @@ import touchy.pad.TouchLink.ServerProxy;
  */
 @Profile("noProxyProvider")
 @Component
-class NoProxyProvider<E extends DiscoveredServer> implements ProxyProvider<E> {
+class NoConnectivityProvider<E extends DiscoveredServer>
+        implements ConnectivityProvider<E> {
 
     @Override
     public ServerProxy getAndStartServer(final Backend backEnd)
-            throws ProxyInitializationException {
+            throws ConnectivityInitializationException {
         return null;
     }
 
     @Override
     public ClientProxy getClient(final E connectTo)
-            throws ProxyInitializationException {
+            throws ConnectivityInitializationException {
         return null;
     }
 

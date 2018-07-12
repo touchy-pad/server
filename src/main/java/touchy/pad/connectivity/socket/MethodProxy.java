@@ -1,4 +1,4 @@
-package touchy.pad.proxy.socket;
+package touchy.pad.connectivity.socket;
 
 import java.awt.Point;
 import java.io.Serializable;

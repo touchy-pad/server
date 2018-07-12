@@ -1,4 +1,4 @@
-package touchy.pad.proxy.socket;
+package touchy.pad.connectivity.socket;
 
 import java.awt.Point;
 import java.io.IOException;
@@ -14,12 +14,12 @@ import touchy.pad.TouchLink;
 
 /**
  * Proxy for the TouchLink.Backend, lives on the mobile device. Calls are
- * forwarded through the SocketProxyServer.
+ * forwarded through the SocketServer.
  *
  * @author Jan Groothuijse
  */
 @Slf4j
-public final class SocketProxyClient
+public final class SocketClient
         implements TouchLink.ClientProxy, AutoCloseable {
 
     /**
@@ -43,8 +43,8 @@ public final class SocketProxyClient
      * @param socketUtils to get socket and object io streams.
      * @throws IOException when the connection fails.
      */
-    public SocketProxyClient(final SocketProxyClientConfig config,
-            final DiscoveredProxyServer connectTo,
+    public SocketClient(final SocketClientConfig config,
+            final DiscoveredSocketServer connectTo,
             final SocketUtils socketUtils) throws IOException {
 
         log.info("Creating client connection.");

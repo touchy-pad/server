@@ -1,4 +1,4 @@
-package touchy.pad.proxy.socket;
+package touchy.pad.connectivity.socket;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -21,8 +21,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import lombok.extern.slf4j.Slf4j;
-import touchy.pad.ProxyInitializationException;
-import touchy.pad.ProxyProvider.CloseableQueueProvider;
+import touchy.pad.ConnectivityInitializationException;
+import touchy.pad.ConnectivityProvider.CloseableQueueProvider;
 import touchy.pad.TouchLink.ClientProxy;
 import touchy.pad.TouchLink.ServerProxy;
 import touchy.pad.desktopcontrol.NoTouchLink;
@@ -33,22 +33,22 @@ import touchy.pad.desktopcontrol.NoTouchLink;
  * @author Jan Groothuijse
  */
 @Slf4j
-public final class DiscoveryProxyTest {
+public final class SocketDiscoveryTest {
 
     /**
      * Server config.
      */
-    private final SocketProxyServerConfig serverConfig;
+    private final SocketServerConfig serverConfig;
     /**
      * Client config.
      */
-    private final SocketProxyClientConfig clientConfig;
+    private final SocketClientConfig clientConfig;
 
     /**
      * Default constructor.
      */
-    public DiscoveryProxyTest() {
-        serverConfig = new SocketProxyServerConfig() {
+    public SocketDiscoveryTest() {
+        serverConfig = new SocketServerConfig() {
 
             @Override
             public String getMessage() {
@@ -56,7 +56,7 @@ public final class DiscoveryProxyTest {
             }
 
         };
-        clientConfig = new SocketProxyClientConfig() {
+        clientConfig = new SocketClientConfig() {
 
             @Override
             public String getMessage() {
@@ -75,19 +75,19 @@ public final class DiscoveryProxyTest {
     @Test
     public void discovery() throws Exception {
 
-        final SocketProxyProvider provider;
-        provider = new SocketProxyProvider(serverConfig, clientConfig,
+        final SocketConnectivityProvider provider;
+        provider = new SocketConnectivityProvider(serverConfig, clientConfig,
                 "0.0.0.0", "255.255.255.255", new SocketUtilsImpl());
 
         final ServerProxy server =
                 provider.getAndStartServer(new NoTouchLink());
         log.info("Getting queue");
-        CloseableQueueProvider<DiscoveredProxyServer> discovered;
+        CloseableQueueProvider<DiscoveredSocketServer> discovered;
         discovered = provider.discoverServers();
         log.info("Received queue, waiting for discoved element.");
-        DiscoveredProxyServer discoveredServer = discovered.get().take();
+        DiscoveredSocketServer discoveredSocketServer = discovered.get().take();
         log.info("Discovered a server");
-        final ClientProxy client = provider.getClient(discoveredServer);
+        final ClientProxy client = provider.getClient(discoveredSocketServer);
         log.info("Received client");
         client.sendClipboard("");
         client.move(new Point(0, 0), true, true, true);
@@ -110,8 +110,8 @@ public final class DiscoveryProxyTest {
         final DatagramSocket mockSocket = Mockito.mock(DatagramSocket.class);
         Mockito.doThrow(SocketException.class).when(mockSocket)
                 .setBroadcast(true);
-        final SocketProxyProvider provider;
-        provider = new SocketProxyProvider(serverConfig, clientConfig,
+        final SocketConnectivityProvider provider;
+        provider = new SocketConnectivityProvider(serverConfig, clientConfig,
                 "0.0.0.0", "255.255.255.255", new SocketUtils() {
                     private final SocketUtilsImpl impl = new SocketUtilsImpl();
 
@@ -155,7 +155,8 @@ public final class DiscoveryProxyTest {
         try (//
                 final ServerProxy //
                 server = provider.getAndStartServer(new NoTouchLink())) {
-            final CloseableQueueProvider<DiscoveredProxyServer> discoverServers;
+            final CloseableQueueProvider<
+                    DiscoveredSocketServer> discoverServers;
             discoverServers = provider.discoverServers();
             assertNotNull(discoverServers);
             final long timeOut = 0;
@@ -177,8 +178,8 @@ public final class DiscoveryProxyTest {
         Mockito.doThrow(IOException.class).when(mockSocket)
                 .receive(Mockito.any(DatagramPacket.class));
         Mockito.when(mockSocket.isClosed()).thenReturn(false);
-        final SocketProxyProvider provider;
-        provider = new SocketProxyProvider(serverConfig, clientConfig,
+        final SocketConnectivityProvider provider;
+        provider = new SocketConnectivityProvider(serverConfig, clientConfig,
                 "0.0.0.0", "255.255.255.255", new SocketUtils() {
                     private final SocketUtilsImpl impl = new SocketUtilsImpl();
 
@@ -222,7 +223,8 @@ public final class DiscoveryProxyTest {
         try (//
                 final ServerProxy //
                 server = provider.getAndStartServer(new NoTouchLink())) {
-            final CloseableQueueProvider<DiscoveredProxyServer> discoverServers;
+            final CloseableQueueProvider<
+                    DiscoveredSocketServer> discoverServers;
             discoverServers = provider.discoverServers();
             assertNotNull(discoverServers);
             final long timeOut = 0;
@@ -238,8 +240,8 @@ public final class DiscoveryProxyTest {
     @Test
     public void checkDiscoverServersExceptionHandling() throws Exception {
 
-        final SocketProxyProvider provider;
-        provider = new SocketProxyProvider(serverConfig, clientConfig,
+        final SocketConnectivityProvider provider;
+        provider = new SocketConnectivityProvider(serverConfig, clientConfig,
                 "0.0.0.0", "255.255.255.255", new SocketUtils() {
                     private final SocketUtilsImpl impl = new SocketUtilsImpl();
 
@@ -294,11 +296,11 @@ public final class DiscoveryProxyTest {
      *
      * @throws Exception when something bad happens.
      */
-    @Test(expected = ProxyInitializationException.class)
+    @Test(expected = ConnectivityInitializationException.class)
     public void checkGetClientExceptionHandling() throws Exception {
 
-        final SocketProxyProvider provider;
-        provider = new SocketProxyProvider(serverConfig, clientConfig,
+        final SocketConnectivityProvider provider;
+        provider = new SocketConnectivityProvider(serverConfig, clientConfig,
                 "0.0.0.0", "255.255.255.255", new SocketUtils() {
                     private final SocketUtilsImpl impl = new SocketUtilsImpl();
 
@@ -342,12 +344,13 @@ public final class DiscoveryProxyTest {
         try (//
                 final ServerProxy //
                 server = provider.getAndStartServer(new NoTouchLink());
-                final CloseableQueueProvider<DiscoveredProxyServer> //
+                final CloseableQueueProvider<DiscoveredSocketServer> //
                 discovered = provider.discoverServers()) {
             log.info("Received queue, waiting for discoved element.");
-            DiscoveredProxyServer discoveredServer = discovered.get().take();
+            DiscoveredSocketServer discoveredSocketServer =
+                    discovered.get().take();
             log.info("Discovered a server");
-            provider.getClient(discoveredServer);
+            provider.getClient(discoveredSocketServer);
         }
     }
 }

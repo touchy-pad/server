@@ -1,4 +1,4 @@
 /**
  * Package to house communication over Sockets.
  */
-package touchy.pad.proxy.socket;
+package touchy.pad.connectivity.socket;

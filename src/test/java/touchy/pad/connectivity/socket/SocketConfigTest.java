@@ -1,4 +1,4 @@
-package touchy.pad.proxy.socket;
+package touchy.pad.connectivity.socket;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -8,7 +8,7 @@ import java.net.UnknownHostException;
 import org.junit.Test;
 import org.springframework.util.StringUtils;
 
-import touchy.pad.ProxyInitializationException;
+import touchy.pad.ConnectivityInitializationException;
 
 /**
  * Tests the configuration classes of the proxy socket package, it checks that
@@ -16,13 +16,13 @@ import touchy.pad.ProxyInitializationException;
  *
  * @author Jan Groothuijse
  */
-public final class ProxySocketConfigTest {
+public final class SocketConfigTest {
 
     /**
      * Default implementation.
      */
-    private final SocketProxyClientConfig clientConfig =
-            new SocketClientProxyConfigImpl();
+    private final SocketClientConfig clientConfig =
+            new SocketClientConfigImpl();
 
     /**
      * Checks the sanity of the default host name.
@@ -39,7 +39,7 @@ public final class ProxySocketConfigTest {
     @Test
     public void checkPortsMatch() {
 
-        final SocketProxyServerConfig serverConfig;
+        final SocketServerConfig serverConfig;
         serverConfig = new SocketProxyServerConfigImpl();
         assertEquals(
                 "By default, the client and server portnumbers must be the "
@@ -52,13 +52,13 @@ public final class ProxySocketConfigTest {
     /**
      * Checks that an exception gets thrown.
      *
-     * @throws ProxyInitializationException always.
+     * @throws ConnectivityInitializationException always.
      * @throws UnknownHostException never.
      */
-    @Test(expected = ProxyInitializationException.class)
+    @Test(expected = ConnectivityInitializationException.class)
     public void checkInsaneServerConfigLeadsToWrappedException()
-            throws ProxyInitializationException, UnknownHostException {
-        final SocketProxyServerConfig config = new SocketProxyServerConfig() {
+            throws ConnectivityInitializationException, UnknownHostException {
+        final SocketServerConfig config = new SocketServerConfig() {
             public int getPort() {
                 return 1;
             }
@@ -69,8 +69,8 @@ public final class ProxySocketConfigTest {
             }
         };
 
-        final SocketProxyProvider provider;
-        provider = new SocketProxyProvider(config, null, "0.0.0.0",
+        final SocketConnectivityProvider provider;
+        provider = new SocketConnectivityProvider(config, null, "0.0.0.0",
                 "255.255.255.255", new SocketUtilsImpl());
 
         provider.getAndStartServer(null);

@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
-import touchy.pad.ProxyProvider.DiscoveredServer;
+import touchy.pad.ConnectivityProvider.DiscoveredServer;
 import touchy.pad.TouchLink.Backend;
 
 /**
@@ -18,12 +18,12 @@ import touchy.pad.TouchLink.Backend;
  */
 @Component
 @Slf4j
-public class ProxyServerService implements AutoCloseable {
+public class ServerService implements AutoCloseable {
 
     /**
      * Provides proxy server.
      */
-    private final ProxyProvider<? extends DiscoveredServer> provider;
+    private final ConnectivityProvider<? extends DiscoveredServer> provider;
     /**
      * The thing being proxied by the proxy server. The proxy server relais the
      * clients commands to this back end.
@@ -43,11 +43,12 @@ public class ProxyServerService implements AutoCloseable {
     /**
      * @param p proxy provider, to provide us with a proxy
      * @param b the upstream touch link
-     * @throws ProxyInitializationException when something is misconfigured
+     * @throws ConnectivityInitializationException when something is
+     *             misconfigured
      */
     @Autowired
-    ProxyServerService(final ProxyProvider<? extends DiscoveredServer> p,
-            final Backend b) throws ProxyInitializationException {
+    ServerService(final ConnectivityProvider<? extends DiscoveredServer> p,
+            final Backend b) throws ConnectivityInitializationException {
         provider = p;
         backEnd = b;
         log.info("Starting proxy server using provider: {}, backend: {}",
@@ -59,9 +60,10 @@ public class ProxyServerService implements AutoCloseable {
     /**
      * Restarts the proxy server, which ever proxy server is configured.
      *
-     * @throws ProxyInitializationException when starting the server fails.
+     * @throws ConnectivityInitializationException when starting the server
+     *             fails.
      */
-    public final void restart() throws ProxyInitializationException {
+    public final void restart() throws ConnectivityInitializationException {
         final boolean notRestarting = false;
         final boolean restarting = true;
         // If we are not already restarting, then set restart to true, to
@@ -76,7 +78,7 @@ public class ProxyServerService implements AutoCloseable {
             }
             try {
                 serverProxy.set(provider.getAndStartServer(backEnd));
-            } catch (final ProxyInitializationException e) {
+            } catch (final ConnectivityInitializationException e) {
                 restart.set(notRestarting);
                 log.error("Failed to start proxy server, rethrowing exception.",
                         e);

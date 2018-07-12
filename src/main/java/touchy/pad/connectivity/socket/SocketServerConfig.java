@@ -1,4 +1,4 @@
-package touchy.pad.proxy.socket;
+package touchy.pad.connectivity.socket;
 
 import touchy.pad.RuntimeConfiguration;
 import touchy.pad.UserConfiguration;
@@ -9,14 +9,14 @@ import touchy.pad.UserConfiguration;
  *
  * @author Jan Groothuijse
  */
-public interface SocketProxyServerConfig extends UserConfiguration {
+public interface SocketServerConfig extends UserConfiguration {
 
     /**
      * @return the configured port number.
      */
     @RuntimeConfiguration("port")
     default int getPort() {
-        return SocketProxyServer.DEFAULT_PORT;
+        return SocketServer.DEFAULT_PORT;
     }
 
     /**
@@ -24,14 +24,14 @@ public interface SocketProxyServerConfig extends UserConfiguration {
      */
     @RuntimeConfiguration("discoveryPort")
     default int getDiscoveryPort() {
-        return DiscoveredProxyServer.DISCOVERY_PORT;
+        return DiscoveredSocketServer.DISCOVERY_PORT;
     }
 
     /**
      * @return request to send when discovering servers.
      */
     default String getDiscoveryRequest() {
-        return DiscoveredProxyServer.DISCOVERY_REQUEST;
+        return DiscoveredSocketServer.DISCOVERY_REQUEST;
     }
 
     /**
@@ -39,6 +39,6 @@ public interface SocketProxyServerConfig extends UserConfiguration {
      */
     @RuntimeConfiguration("serverName")
     default String getServerName() {
-        return SocketProxyServer.SERVER_NAME;
+        return SocketServer.SERVER_NAME;
     }
 }

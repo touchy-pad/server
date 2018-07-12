@@ -1,4 +1,4 @@
-package touchy.pad.proxy.socket;
+package touchy.pad.connectivity.socket;
 
 import org.springframework.stereotype.Component;
 
@@ -7,12 +7,12 @@ import org.springframework.stereotype.Component;
  *
  * @author Jan Groothuijse
  */
-@Component("socketClientProxyConfigImpl")
-public class SocketClientProxyConfigImpl implements SocketProxyClientConfig {
+@Component("socketProxyServerConfig")
+public class SocketProxyServerConfigImpl implements SocketServerConfig {
 
     @Override
     public final String getMessage() {
-        return "tcpClient";
+        return "tcpServer";
     }
 
 }

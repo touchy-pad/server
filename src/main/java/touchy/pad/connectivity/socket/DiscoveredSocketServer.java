@@ -1,10 +1,10 @@
-package touchy.pad.proxy.socket;
+package touchy.pad.connectivity.socket;
 
 import java.net.InetAddress;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import touchy.pad.ProxyProvider;
+import touchy.pad.ConnectivityProvider;
 
 /**
  * Stores information required to: 1) Allow the user to choose the right server
@@ -13,7 +13,7 @@ import touchy.pad.ProxyProvider;
  * @author Jan Groothuijse
  */
 @RequiredArgsConstructor
-class DiscoveredProxyServer implements ProxyProvider.DiscoveredServer {
+class DiscoveredSocketServer implements ConnectivityProvider.DiscoveredServer {
 
     /**
      * Name of the server, it should send its name.

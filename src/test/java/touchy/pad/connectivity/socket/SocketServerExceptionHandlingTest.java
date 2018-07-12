@@ -1,4 +1,4 @@
-package touchy.pad.proxy.socket;
+package touchy.pad.connectivity.socket;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -14,7 +14,7 @@ import org.mockito.Mockito;
  *
  * @author Jan Groothuijse
  */
-public final class SocketProxyServerExceptionHandlingTest {
+public final class SocketServerExceptionHandlingTest {
     /**
      * @throws IOException when network fails.
      * @throws InterruptedException when the join call is interrupted.
@@ -22,8 +22,8 @@ public final class SocketProxyServerExceptionHandlingTest {
     @Test
     public void handleConnectionGetOutputThrows()
             throws IOException, InterruptedException {
-        final SocketProxyServer sut =
-                new SocketProxyServer(new SocketProxyServerConfig() {
+        final SocketServer sut =
+                new SocketServer(new SocketServerConfig() {
 
                     @Override
                     public String getMessage() {
@@ -46,7 +46,7 @@ public final class SocketProxyServerExceptionHandlingTest {
     @Test
     public void handleConnectionGetInputThrows()
             throws IOException, InterruptedException {
-        final SocketProxyServerConfig config = new SocketProxyServerConfig() {
+        final SocketServerConfig config = new SocketServerConfig() {
 
             @Override
             public String getMessage() {
@@ -55,8 +55,8 @@ public final class SocketProxyServerExceptionHandlingTest {
 
         };
 
-        final SocketProxyServer sut;
-        sut = new SocketProxyServer(config, null,
+        final SocketServer sut;
+        sut = new SocketServer(config, null,
                 InetAddress.getByName("0.0.0.0"), new SocketUtilsImpl());
 
         final OutputStream os = new ByteArrayOutputStream();

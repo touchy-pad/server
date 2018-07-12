@@ -1,4 +1,4 @@
-package touchy.pad.proxy.socket;
+package touchy.pad.connectivity.socket;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -13,7 +13,7 @@ import org.junit.Test;
  *
  * @author Jan Groothuijse
  */
-public final class DiscoveredProxyServerTest {
+public final class DiscoveredSocketServerTest {
     /**
      * @throws UnknownHostException when localhost is not a known host.
      */
@@ -21,8 +21,8 @@ public final class DiscoveredProxyServerTest {
     public void checkGetters() throws UnknownHostException {
         final String serverName = "serverName";
         final InetAddress address = InetAddress.getLocalHost();
-        DiscoveredProxyServer server =
-                new DiscoveredProxyServer(serverName, address);
+        DiscoveredSocketServer server =
+                new DiscoveredSocketServer(serverName, address);
         assertEquals(serverName, server.getName());
         assertEquals(address, server.getAddress());
         assertNotNull(server.getSpecification());

@@ -5,7 +5,7 @@ package touchy.pad;
  *
  * @author Jan Groothuijse
  */
-public final class ProxyInitializationException extends Exception {
+public final class ConnectivityInitializationException extends Exception {
 
     /**
      * For serialization.
@@ -15,7 +15,7 @@ public final class ProxyInitializationException extends Exception {
     /**
      * @param e the wrapped exception.
      */
-    public ProxyInitializationException(final Exception e) {
+    public ConnectivityInitializationException(final Exception e) {
         super(e);
     }
 

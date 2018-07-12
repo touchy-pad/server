@@ -16,11 +16,13 @@ import java.util.function.Supplier;
  *
  * @param <E> The type of the discovered servers. Using a bound instead of
  *            normal inheritance improves the typing, since we do not have to
- *            cast in implementations of touchy.pad.ProxyProvider.getClient(),
- *            to access information not in the DiscoveredServer interface needed
- *            to connect to the server.
+ *            cast in implementations of
+ *            touchy.pad.ConnectivityProvider.getClient(), to access information
+ *            not in the DiscoveredSocketServer interface needed to connect to
+ *            the server.
  */
-public interface ProxyProvider<E extends ProxyProvider.DiscoveredServer> {
+public interface ConnectivityProvider<
+        E extends ConnectivityProvider.DiscoveredServer> {
 
     /**
      * Combines lifecycle and queue of discovery.
@@ -30,24 +32,24 @@ public interface ProxyProvider<E extends ProxyProvider.DiscoveredServer> {
      * @param <E> Type of discovered servers.
      */
     public interface CloseableQueueProvider<
-            E extends ProxyProvider.DiscoveredServer>
+            E extends ConnectivityProvider.DiscoveredServer>
             extends Supplier<BlockingQueue<E>>, Closeable {
 
     }
 
     /**
-     * ProxyProvider Creates a server, which begins listener and returns it.
-     * Should be called on the server side of the application, running on the
-     * PC.
+     * ConnectivityProvider Creates a server, which begins listener and returns
+     * it. Should be called on the server side of the application, running on
+     * the PC.
      *
      * Please use try-with-resources to manage the resources of the server.
      *
      * @param backEnd to actually move the pointer, the upstream.
-     * @throws ProxyInitializationException when initialization
+     * @throws ConnectivityInitializationException when initialization
      * @return a running server.
      */
     TouchLink.ServerProxy getAndStartServer(TouchLink.Backend backEnd)
-            throws ProxyInitializationException;
+            throws ConnectivityInitializationException;
 
     /**
      * Creates a new client and connects to the server. Should be called on the
@@ -56,11 +58,11 @@ public interface ProxyProvider<E extends ProxyProvider.DiscoveredServer> {
      * Please use try-with-resources to manage the resources of the client.
      *
      * @param connectTo the discovered server to connect to.
-     * @throws ProxyInitializationException when initialization
+     * @throws ConnectivityInitializationException when initialization
      * @return a client proxy, connected to the server.
      */
     TouchLink.ClientProxy getClient(E connectTo)
-            throws ProxyInitializationException;
+            throws ConnectivityInitializationException;
 
     /**
      * Runs a server discovery, on ethernet this would be using broadcast etc.
@@ -77,7 +79,7 @@ public interface ProxyProvider<E extends ProxyProvider.DiscoveredServer> {
      * The proxy provider first provides a list of servers that are available,
      * then the GUI displays this list and lets the user choose one, this
      * choosen server is then connected to using
-     * touchy.pad.ProxyProvider.getClient().
+     * touchy.pad.ConnectivityProvider.getClient().
      *
      * Derived classes implements some generic methods so that the user can
      * identify the server and make an informed decision to to connect to a

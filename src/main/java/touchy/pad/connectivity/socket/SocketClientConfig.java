@@ -1,4 +1,4 @@
-package touchy.pad.proxy.socket;
+package touchy.pad.connectivity.socket;
 
 import touchy.pad.RuntimeConfiguration;
 import touchy.pad.UserConfiguration;
@@ -8,7 +8,7 @@ import touchy.pad.UserConfiguration;
  *
  * @author Jan Groothuijse
  */
-public interface SocketProxyClientConfig extends UserConfiguration {
+public interface SocketClientConfig extends UserConfiguration {
     /**
      * @return hostname of the server as a string.
      */
@@ -22,6 +22,6 @@ public interface SocketProxyClientConfig extends UserConfiguration {
      */
     @RuntimeConfiguration("port")
     default int getPort() {
-        return SocketProxyServer.DEFAULT_PORT;
+        return SocketServer.DEFAULT_PORT;
     }
 }

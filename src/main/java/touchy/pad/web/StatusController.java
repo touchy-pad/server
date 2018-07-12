@@ -10,7 +10,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import touchy.pad.ProxyServerService;
+import touchy.pad.ServerService;
 import touchy.pad.TouchLink.Backend;
 import touchy.pad.TouchLink.ServerProxy;
 
@@ -27,7 +27,7 @@ public class StatusController {
     /**
      * Supplies us with a service to query for information.
      */
-    private final ProxyServerService proxyServerService;
+    private final ServerService serverService;
 
     /**
      * @return view and model to render a page displaying the current status of
@@ -37,9 +37,9 @@ public class StatusController {
     public final ModelAndView view() {
         log.info("handling GET request");
         final ModelAndView viewModel = new ModelAndView("view");
-        final ServerProxy server = proxyServerService.getProxyServer();
+        final ServerProxy server = serverService.getProxyServer();
         viewModel.addObject("serverStatus", server.getDescription());
-        final Backend backEnd = proxyServerService.getBackEnd();
+        final Backend backEnd = serverService.getBackEnd();
         viewModel.addObject("backEndStatus", backEnd.getDescription());
         return viewModel;
     }
@@ -58,7 +58,7 @@ public class StatusController {
                     final @RequestParam(value = "moveToBottom",
                             defaultValue = "0") int moveDown) {
         // Move the mouse on the server
-        proxyServerService.getBackEnd().move(new Point(moveRight, moveDown),
+        serverService.getBackEnd().move(new Point(moveRight, moveDown),
                 false, false, false);
         // Return same view as view.
         return view();

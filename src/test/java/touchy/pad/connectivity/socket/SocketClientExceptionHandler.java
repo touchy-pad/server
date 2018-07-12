@@ -1,4 +1,4 @@
-package touchy.pad.proxy.socket;
+package touchy.pad.connectivity.socket;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -16,13 +16,13 @@ import org.mockito.Mockito;
  *
  * @author Jan Groothuijse
  */
-public final class SocketProxyClientExceptionHandler {
+public final class SocketClientExceptionHandler {
     /**
      * @throws Exception when the test fails.
      */
     @Test
     public void testIOExceptionInClose() throws Exception {
-        final SocketProxyClientConfig config = new SocketProxyClientConfig() {
+        final SocketClientConfig config = new SocketClientConfig() {
 
             @Override
             public String getMessage() {
@@ -42,10 +42,10 @@ public final class SocketProxyClientExceptionHandler {
         Mockito.when(socketUtils.objectOutputStream(null)).thenReturn(oos);
 
         Mockito.doThrow(IOException.class).when(oos).close();
-        final DiscoveredProxyServer touchLink;
-        touchLink = Mockito.mock(DiscoveredProxyServer.class);
-        final SocketProxyClient client =
-                new SocketProxyClient(config, touchLink, socketUtils);
+        final DiscoveredSocketServer touchLink;
+        touchLink = Mockito.mock(DiscoveredSocketServer.class);
+        final SocketClient client =
+                new SocketClient(config, touchLink, socketUtils);
         client.close();
     }
 
@@ -54,7 +54,7 @@ public final class SocketProxyClientExceptionHandler {
      */
     @Test
     public void testIOExceptionInWrite() throws Exception {
-        final SocketProxyClientConfig config = new SocketProxyClientConfig() {
+        final SocketClientConfig config = new SocketClientConfig() {
 
             @Override
             public String getMessage() {
@@ -77,10 +77,10 @@ public final class SocketProxyClientExceptionHandler {
         Mockito.when(ios.readObject()).thenReturn(object);
         Mockito.doThrow(IOException.class).when(oos)
                 .writeObject(Mockito.any(MethodProxy.class));
-        final DiscoveredProxyServer touchLink;
-        touchLink = Mockito.mock(DiscoveredProxyServer.class);
-        final SocketProxyClient client =
-                new SocketProxyClient(config, touchLink, socketUtils);
+        final DiscoveredSocketServer touchLink;
+        touchLink = Mockito.mock(DiscoveredSocketServer.class);
+        final SocketClient client =
+                new SocketClient(config, touchLink, socketUtils);
 
         assertEquals(object, client.receiveClipboard().get());
         client.close();
@@ -91,7 +91,7 @@ public final class SocketProxyClientExceptionHandler {
      */
     @Test
     public void testIOExceptionInRead() throws Exception {
-        final SocketProxyClientConfig config = new SocketProxyClientConfig() {
+        final SocketClientConfig config = new SocketClientConfig() {
 
             @Override
             public String getMessage() {
@@ -111,10 +111,10 @@ public final class SocketProxyClientExceptionHandler {
         Mockito.when(socketUtils.objectOutputStream(null)).thenReturn(oos);
 
         Mockito.doThrow(IOException.class).when(ios).readObject();
-        final DiscoveredProxyServer touchLink;
-        touchLink = Mockito.mock(DiscoveredProxyServer.class);
-        final SocketProxyClient client =
-                new SocketProxyClient(config, touchLink, socketUtils);
+        final DiscoveredSocketServer touchLink;
+        touchLink = Mockito.mock(DiscoveredSocketServer.class);
+        final SocketClient client =
+                new SocketClient(config, touchLink, socketUtils);
         assertNull(client.receiveClipboard().get());
         client.close();
     }
@@ -124,7 +124,7 @@ public final class SocketProxyClientExceptionHandler {
      */
     @Test
     public void testClassNotFoundExceptionInRead() throws Exception {
-        final SocketProxyClientConfig config = new SocketProxyClientConfig() {
+        final SocketClientConfig config = new SocketClientConfig() {
 
             @Override
             public String getMessage() {
@@ -144,10 +144,10 @@ public final class SocketProxyClientExceptionHandler {
         Mockito.when(socketUtils.objectOutputStream(null)).thenReturn(oos);
 
         Mockito.doThrow(ClassNotFoundException.class).when(ios).readObject();
-        final DiscoveredProxyServer touchLink;
-        touchLink = Mockito.mock(DiscoveredProxyServer.class);
-        final SocketProxyClient client =
-                new SocketProxyClient(config, touchLink, socketUtils);
+        final DiscoveredSocketServer touchLink;
+        touchLink = Mockito.mock(DiscoveredSocketServer.class);
+        final SocketClient client =
+                new SocketClient(config, touchLink, socketUtils);
         assertNull(client.receiveClipboard().get());
         client.close();
     }
