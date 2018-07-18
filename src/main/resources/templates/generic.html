@@ -18,9 +18,9 @@
         <li class="pure-menu-item"><a href="/status" class="pure-menu-link"
           th:text="#{main.status}"
           th:classappend="${navItem == 'orders'}?current-item">Status</a></li>
-        <li class="pure-menu-item"><a href="/configuration"
-          class="pure-menu-link" th:text="#{main.configuration}"
-          th:href="@{/status}"
+        <li class="pure-menu-item"><a href="settings.html"
+          class="pure-menu-link" th:text="#{main.settings}"
+          th:href="@{/settings}"
           th:classappend="${navItem == 'products'}?current-item">Configuration</a>
         </li>
       </ul>

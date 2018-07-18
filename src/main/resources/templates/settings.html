@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Status</title>
+    <link rel="stylesheet" type="text/css" media="all"
+        href="../static/style.css" th:href="@{/style.css}" />
+    <link rel="stylesheet" type="text/css" media="all"
+        href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+  </head>
+
+  <body>
+    <div th:replace="generic :: navbar">Menu placeholder, see generic.html for definition</div>
+    <div id="main">
+    <h1>Settings</h1>
+    <div th:each="settingsGroup : ${settingsGroups}">
+    	<h2 th:text="${settingsGroup.getKey()}">Some settings group</h2>
+    	<table  class="pure-table pure-table-striped">
+    	<tr>
+    		<th>Property</th>
+    		<th>Type</th>
+    		<th>Current value</th>
+    		</tr>
+    	<tr th:each="setting : ${settingsGroup.getValue()}">
+    		<td th:text="${setting.message}">Some proeprty</td>
+    		<td class="value" th:text="${setting.type}">Integer</td>
+    		<td class="value" th:text="${setting.value}">0</td>
+    	</tr>
+    	</table>
+    </div>
+  </div>
+    <div th:replace="generic :: footer">Footer placeholder, see generic.html for definition</div>
+  </body>
+
+</html>
