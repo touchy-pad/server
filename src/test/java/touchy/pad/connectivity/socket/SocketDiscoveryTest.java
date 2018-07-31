@@ -151,10 +151,8 @@ public final class SocketDiscoveryTest {
                         return impl.socket(port, address);
                     }
                 });
-
-        try (//
-                final ServerProxy //
-                server = provider.getAndStartServer(new NoTouchLink())) {
+        final NoTouchLink backEnd = new NoTouchLink();
+        try (ServerProxy server = provider.getAndStartServer(backEnd)) {
             final CloseableQueueProvider<
                     DiscoveredSocketServer> discoverServers;
             discoverServers = provider.discoverServers();
@@ -220,9 +218,8 @@ public final class SocketDiscoveryTest {
                     }
                 });
 
-        try (//
-                final ServerProxy //
-                server = provider.getAndStartServer(new NoTouchLink())) {
+        final NoTouchLink backEnd = new NoTouchLink();
+        try (ServerProxy server = provider.getAndStartServer(backEnd)) {
             final CloseableQueueProvider<
                     DiscoveredSocketServer> discoverServers;
             discoverServers = provider.discoverServers();
@@ -283,10 +280,8 @@ public final class SocketDiscoveryTest {
                         return impl.socket(port, address);
                     }
                 });
-
-        try (//
-                final ServerProxy //
-                server = provider.getAndStartServer(new NoTouchLink())) {
+        final NoTouchLink backEnd = new NoTouchLink();
+        try (ServerProxy server = provider.getAndStartServer(backEnd)) {
             assertNull(provider.discoverServers());
         }
     }
@@ -341,10 +336,10 @@ public final class SocketDiscoveryTest {
                     }
                 });
 
+        final NoTouchLink backEnd = new NoTouchLink();
         try (//
-                final ServerProxy //
-                server = provider.getAndStartServer(new NoTouchLink());
-                final CloseableQueueProvider<DiscoveredSocketServer> //
+                ServerProxy server = provider.getAndStartServer(backEnd);
+                CloseableQueueProvider<DiscoveredSocketServer> //
                 discovered = provider.discoverServers()) {
             log.info("Received queue, waiting for discoved element.");
             DiscoveredSocketServer discoveredSocketServer =

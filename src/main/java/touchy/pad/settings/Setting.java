@@ -29,6 +29,9 @@ public class Setting {
      */
     private final Method method;
 
+    /**
+     * @param m method of configuration class.
+     */
     Setting(final Method m) {
         method = m;
         final Class<?> returnType = m.getReturnType();

@@ -45,7 +45,7 @@ public class ConfigurationController {
                                 log.info("setting: {}", setting.getMessage());
                                 final Object value =
                                         settingsService.getValue(setting);
-                                return new SettingModel( //
+                                return new SettingModel(//
                                         getId(group, setting), //
                                         setting.getMessage(), //
                                         value,
@@ -54,16 +54,41 @@ public class ConfigurationController {
                 }).collect(Collectors.toList()));
     }
 
-    private String getId(SettingsGroup group, Setting setting) {
+    /**
+     * @param group the setting belongs to
+     * @param setting to get the id of
+     * @return some identifier, so we can encode which setting to alter in a
+     * string.
+     */
+    private String getId(final SettingsGroup group, final Setting setting) {
         return group.getMessage() + "." + setting.getMessage();
     }
 
+    /**
+     * A controllers view of a setting.
+     *
+     * @author Jan Groothuijse
+     */
     @Getter
     @AllArgsConstructor
     public static final class SettingModel {
+        /**
+         * To identify the settings, used when the user wants to change a
+         * setting via post request.
+         */
         private final String id;
+        /**
+         * To translate name and description.
+         */
         private final String message;
+        /**
+         * The current value of the setting, may be the default.
+         */
         private final Object value;
+        /**
+         * The type of the setting, so that the user interface can display the
+         * value correctly and create a form to edit it accordingly.
+         */
         private final String type;
     }
 }

@@ -28,15 +28,22 @@ public class SettingsService {
      */
     private final List<SettingsGroup> settings;
 
+    /**
+     * Used to store deviation from standard configuration.
+     */
     private final RuntimeConfigurationBackend backEnd;
 
+    /**
+     * Maps settings to configuration objects.
+     */
     private final Map<Setting, UserConfiguration> settingsToConfiguration;
 
     /**
      * @param configurations all active configuration objects.
+     * @param b used to store deviation from standard configuration
      */
-    public SettingsService(List<UserConfiguration> configurations,
-            RuntimeConfigurationBackend b) {
+    public SettingsService(final List<UserConfiguration> configurations,
+            final RuntimeConfigurationBackend b) {
         final List<Pair<UserConfiguration, SettingsGroup>> configAndGroups;
         configAndGroups = configurations.stream() //
                 .map(config -> Pair.of(config, new SettingsGroup(config))) //
@@ -53,7 +60,11 @@ public class SettingsService {
         backEnd = b;
     }
 
-    public Object getValue(Setting setting) {
+    /**
+     * @param setting the properties/attribute that is configured
+     * @return the current value of the setting
+     */
+    public final Object getValue(final Setting setting) {
         try {
             return setting.getMethod()
                     .invoke(settingsToConfiguration.get(setting));
@@ -64,7 +75,11 @@ public class SettingsService {
         }
     }
 
-    public void setValue(Setting setting, Object value) {
+    /**
+     * @param setting the properties/attribute to configure
+     * @param value the new value to configure
+     */
+    public final void setValue(final Setting setting, final Object value) {
         setting.getSetter().accept(backEnd, value);
     }
 }

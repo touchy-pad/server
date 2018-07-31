@@ -28,12 +28,18 @@ public class SettingsGroup {
      */
     private final List<Setting> settings;
 
+    /**
+     * Configuration.
+     */
     private final UserConfiguration config;
 
-    SettingsGroup(final UserConfiguration config) {
-        this.config = config;
-        message = config.getMessage();
-        settings = Arrays.stream(AopUtils.getTargetClass(config).getMethods()) //
+    /**
+     * @param c Configuration
+     */
+    SettingsGroup(final UserConfiguration c) {
+        this.config = c;
+        message = c.getMessage();
+        settings = Arrays.stream(AopUtils.getTargetClass(c).getMethods()) //
                 .filter(m -> m
                         .getAnnotation(RuntimeConfiguration.class) != null)
                 .map(Setting::new).collect(Collectors.toList());
